@@ -42,7 +42,8 @@ namespace SystemTrayApp
             // Attach a context menu.
             
 			ni.ContextMenuStrip = new ContextMenus().Create();
-            string[] prefix = { "http://localhost:53951/", "http://localhost.fineid.fi:53951/", "https://localhost.fineid.fi:53952/", "https://localhost:53952/" };
+            //
+            string[] prefix = { "http://localhost:53951/", "https://localhost:53952/" };
             WebServer ws = new WebServer(wsHTTPRequestHandler.SendResponse , prefix);
             ws.Run();
 
