@@ -32,8 +32,28 @@ namespace SystemTrayApp
         public IList<string> chain = new List<string>();
         [DataMember]
         public bool Valid;
+        /*profiles:
+        1) Base
+        2) + Extensions
+        4) + Chain
+        default 5) Base + Chain
+        */
 
         private int profile=5;
+        public CertInfo() { }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="profile">
+        /// 1) Base
+        /// 2) + Extensions
+        /// 4) + Chain
+        /// default 5) Base + Chain
+        /// </param>
+        public CertInfo(int profile)
+        {
+            this.profile = profile;
+        }
         public CertInfo getCertInfo(X509Certificate2 certificate)
         {
             CertInfo resCert = new CertInfo();
@@ -54,11 +74,12 @@ namespace SystemTrayApp
                     resCert.Issuer = x509.Issuer;
                     resCert.Thumbprint = x509.Thumbprint;
                     resCert.SerialNumber = x509.GetSerialNumberString();
-                    var extensions = x509.Extensions;
+                    
                     resCert.DateTimeNotBefore = x509.NotBefore;
                     resCert.DateTimeNotAfter = x509.NotAfter;
                     resCert.Valid = x509.Verify();
-                    if ((profile & 2) == 2) { 
+                    if ((profile & 2) == 2) {
+                        var extensions = x509.Extensions;
                         foreach (var extension in extensions)
                         {
                             resCert.Extensions.Add(new Extension(extension));
