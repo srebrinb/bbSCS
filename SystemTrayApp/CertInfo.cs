@@ -31,6 +31,8 @@ namespace SystemTrayApp
         [DataMember]
         public IList<string> chain = new List<string>();
         [DataMember]
+        public string CertX509="";
+        [DataMember]
         public bool Valid;
         /*profiles:
         1) Base
@@ -38,8 +40,15 @@ namespace SystemTrayApp
         4) + Chain
         default 5) Base + Chain
         */
-
-        private int profile=5;
+        [Flags]
+        public enum Profiles
+        {
+            Base = 1,
+            Extensions = 2,
+            Chain = 4,
+            CertX509 = 8
+        }
+        private Profiles profile = Profiles.Base| Profiles.Chain;
         public CertInfo() { }
         /// <summary>
         /// 
@@ -48,9 +57,10 @@ namespace SystemTrayApp
         /// 1) Base
         /// 2) + Extensions
         /// 4) + Chain
+        /// 8) + CertX509
         /// default 5) Base + Chain
         /// </param>
-        public CertInfo(int profile)
+        public CertInfo(Profiles profile)
         {
             this.profile = profile;
         }
@@ -78,7 +88,10 @@ namespace SystemTrayApp
                     resCert.DateTimeNotBefore = x509.NotBefore;
                     resCert.DateTimeNotAfter = x509.NotAfter;
                     resCert.Valid = x509.Verify();
-                    if ((profile & 2) == 2) {
+                    if (profile.HasFlag(Profiles.CertX509)) { 
+                        resCert.CertX509 = System.Convert.ToBase64String(x509.GetRawCertData());
+                    }
+                    if (profile.HasFlag(Profiles.Extensions)) {
                         var extensions = x509.Extensions;
                         foreach (var extension in extensions)
                         {
@@ -87,7 +100,7 @@ namespace SystemTrayApp
                     }
                 }
                 i++;
-                if ((profile & 4) == 4)
+                if (profile.HasFlag(Profiles.Chain))
                 {
                     resCert.chain.Add(System.Convert.ToBase64String(x509.GetRawCertData()));
                 }
