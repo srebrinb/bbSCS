@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -57,6 +58,12 @@ namespace SystemTrayApp
                 chain.Add(System.Convert.ToBase64String(x509.GetRawCertData()));
             }
         }
+        public JObject getJson()
+        {
+            return JObject.FromObject(this);
+
+
+        }
         public string getJsonStr()
         {
             MemoryStream stream1 = new MemoryStream();
@@ -67,6 +74,7 @@ namespace SystemTrayApp
             string json = sr.ReadToEnd();
             return json;
         }
+      
         public string[] getChain()
         {
             return chain.ToArray();

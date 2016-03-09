@@ -29,9 +29,9 @@ namespace SystemTrayApp
 
 			// Windows Explorer.
 			item = new ToolStripMenuItem();
-			item.Text = "Explorer";
-			item.Click += new EventHandler(Explorer_Click);
-			item.Image = Resources.Explorer;
+			item.Text = "Install SSL cert";
+			item.Click += new EventHandler(InstallSSLCert_Click);
+            item.Image = Resources.ssl_certificates;
 			menu.Items.Add(item);
 
 			// About.
@@ -60,10 +60,11 @@ namespace SystemTrayApp
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void Explorer_Click(object sender, EventArgs e)
+		void InstallSSLCert_Click(object sender, EventArgs e)
 		{
-			Process.Start("explorer", null);
-		}
+			Process.Start("http://localhost:53951/install", null);
+
+        }
 
 		/// <summary>
 		/// Handles the Click event of the About control.

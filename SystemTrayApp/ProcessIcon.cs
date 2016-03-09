@@ -17,7 +17,7 @@ namespace SystemTrayApp
 		NotifyIcon ni;
         WebService wsHTTPRequestHandler;
         Process browserStartProc=null;
-        
+        WebServer ws;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessIcon"/> class.
@@ -46,7 +46,7 @@ namespace SystemTrayApp
 			ni.ContextMenuStrip = new ContextMenus().Create();
             //
             string[] prefix = { "http://localhost:53951/", "https://localhost:53952/" };
-            WebServer ws = new WebServer(wsHTTPRequestHandler.SendResponse , prefix);
+            ws = new WebServer(wsHTTPRequestHandler.SendResponse , prefix);
             ws.Run();
 
         }
@@ -80,5 +80,10 @@ namespace SystemTrayApp
                 }
 			}
 		}
-	}
+        void OnDestroy()
+        {
+            ws.Stop();
+            Program.exit();
+        }
+    }
 }

@@ -17,64 +17,74 @@ namespace SystemTrayApp
     class WebService
     {
         CertInfo selectedCert = null;
-        private string selectCert(dynamic payload)
+        public X509Certificate2Collection lisyMyCerts(dynamic payload)
         {
             X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
             store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
             X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
-            X509Certificate2Collection fcollection =new X509Certificate2Collection(collection);
+            X509Certificate2Collection fcollection = new X509Certificate2Collection(collection);
             dynamic selector = null;
-            try { 
-             selector = payload.selector;
-            }
-            catch
+            try
             {
-                
+                selector = payload.selector;
             }
-            if (selector!=null)
+            catch { }
+            if (selector != null)
             {
-                
-                bool validate = false;
-                if (selector.validate != null && selector.validate=="true")
-                {
-                    validate = (selector.validate == "true" ? true: false);
-                    fcollection = (X509Certificate2Collection)fcollection.Find(X509FindType.FindByTimeValid, DateTime.Now, validate); 
-                }
-                if (selector.issuers != null )
-                {
-                  
-                    X509Certificate2Collection tmpcollection=new X509Certificate2Collection();
-                    foreach (string issuer in selector.issuers)
-                    {
-                        X509Certificate2Collection issuerColl=(X509Certificate2Collection)fcollection.Find(X509FindType.FindByIssuerName, issuer, validate);
-                        tmpcollection.AddRange(issuerColl);
-                    }
-                    fcollection = tmpcollection;
-                }
-                if (selector.akis != null)
-                {
 
-                    X509Certificate2Collection tmpcollection = new X509Certificate2Collection();
-                    foreach (string issuer in selector.issuers)
-                    {
-                        X509Certificate2Collection issuerColl = (X509Certificate2Collection)fcollection.Find(X509FindType.FindByExtension, issuer, validate);
-                        tmpcollection.AddRange(issuerColl);
-                    }
-                    fcollection = tmpcollection;
-                }
-                if (selector.thumbprint != null)
+                bool validate = false;
+                try
                 {
-                    string thumbprint = selector.thumbprint;
-                    thumbprint = thumbprint.Replace("\u200e", string.Empty).Replace("\u200f", string.Empty).Replace(" ", string.Empty);
-                    thumbprint = thumbprint.ToLower();
-                    fcollection = (X509Certificate2Collection)fcollection.Find(X509FindType.FindByThumbprint, thumbprint, validate);
+                    if (selector.validate != null && selector.validate == "true")
+                    {
+                        validate = (selector.validate == "true" ? true : false);
+                        fcollection = (X509Certificate2Collection)fcollection.Find(X509FindType.FindByTimeValid, DateTime.Now, validate);
+                    }
                 }
+                catch { }
+                try
+                {
+                    if (selector.issuers != null)
+                    {
+
+                        X509Certificate2Collection tmpcollection = new X509Certificate2Collection();
+                        foreach (string issuer in selector.issuers)
+                        {
+                            X509Certificate2Collection issuerColl = (X509Certificate2Collection)fcollection.Find(X509FindType.FindByIssuerName, issuer, validate);
+                            tmpcollection.AddRange(issuerColl);
+                        }
+                        fcollection = tmpcollection;
+                    }
+                }
+                catch { }
+                try
+                {
+                    if (selector.thumbprint != null)
+                    {
+                        string thumbprint = selector.thumbprint;
+                        thumbprint = thumbprint.Replace("\u200e", string.Empty).Replace("\u200f", string.Empty).Replace(" ", string.Empty).Replace(":", string.Empty).Replace("-", string.Empty);
+                        thumbprint = thumbprint.ToLower();
+                        fcollection = (X509Certificate2Collection)fcollection.Find(X509FindType.FindByThumbprint, thumbprint, validate);
+                    }
+                }
+                catch { }
             }
-            if (fcollection.Count ==0)
+            store.Close();
+            return fcollection;
+        }
+        private string selectCert(dynamic payload)
+        {
+            X509Certificate2Collection fcollection = lisyMyCerts(payload);
+            if (fcollection.Count == 0)
             {
-                return "";
+                var objResp = new JObject();
+                objResp.Add("version", "1.0");
+                objResp.Add("status", "failed");
+                objResp.Add("reasonCode", 500);
+                objResp.Add("reasonText", "Cert not faund");
+                return objResp.ToString();
             }
-                if (fcollection.Count > 1)
+            if (fcollection.Count > 1)
             {
                 fcollection = X509Certificate2UI.SelectFromCollection(fcollection, "Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.SingleSelection);
 
@@ -88,9 +98,28 @@ namespace SystemTrayApp
                 selectedCert = certInfo;
                 //x509.Reset();
             }
-            store.Close();
-
             return json;
+        }
+        private string getListCerts(dynamic payload)
+        {
+            var objResp = new JObject();
+            objResp.Add("version", "1.0");
+            X509Certificate2Collection fcollection = lisyMyCerts(payload);
+            CertInfo certInfo;
+            string json = "";
+
+            var arrCerts = new JArray();
+            int count = 0;
+            foreach (X509Certificate2 x509 in fcollection)
+            {
+                certInfo = new CertInfo(x509);
+                arrCerts.Add(certInfo.getJson());
+                count++;
+            }
+            objResp.Add("count", count);            
+            objResp.Add("certs", arrCerts);
+            return objResp.ToString();
+
         }
         private string selectCert()
         {
@@ -200,27 +229,23 @@ namespace SystemTrayApp
             }
             if (segments[1].ToLower().StartsWith("install"))
             {
-                if (!Html5WebSCSTrayApp.InstallSetup.IsAdministrator()) {
+
+                if (!Html5WebSCSTrayApp.InstallSetup.IsAdministrator())
+                {
+                    ctx.Response.ContentType = "text/html";
+                    strOut = "Installing<br/>Reset app";
+                    byte[] bufOut = Encoding.UTF8.GetBytes(strOut);
+                    ctx.Response.ContentLength64 = bufOut.Length;
+                    ctx.Response.OutputStream.Write(bufOut, 0, bufOut.Length);
+                    // ctx.Response.Close();
                     Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
                     Program.exit();
+                    return false;
                 }
             }
-            if (request.HttpMethod.ToUpper().Equals("GET"))
+
+            if ((request.HttpMethod.ToUpper().Equals("POST") || request.HttpMethod.ToUpper().Equals("GET")))
             {
-                ctx.Response.ContentType = "application/json";
-                payload = new DynamicDictionary();
-
-                foreach (var param in request.QueryString)
-                {
-                    payload.dictionary[param.ToString().ToLower()] = request.QueryString.Get(param.ToString()); ;
-                }
-
-                if (segments[1].ToLower().StartsWith("selectcert")) strOut = selectCert(payload);
-
-            }
-            if (segments[1].ToLower().StartsWith("sign") && (request.HttpMethod.ToUpper().Equals("POST") || request.HttpMethod.ToUpper().Equals("GET")))
-            {
-                ctx.Response.ContentType = "application/json";
                 if (request.HttpMethod.ToUpper().Equals("POST"))
                 {
                     string documentContents;
@@ -231,30 +256,49 @@ namespace SystemTrayApp
                             documentContents = readStream.ReadToEnd();
                         }
                     }
-                    Console.WriteLine(documentContents);
-                    // if (segments[1].ToLower().Equals("sign/")) jsonOut = sign(segments[2]);
-
                     payload = JsonConvert.DeserializeObject(documentContents);
                 }
                 else
                 {
                     payload = new DynamicDictionary();
-                    /*   payload.version = request.QueryString.Get("version");
-
-                       payload.hashAlgorithm = request.QueryString.Get("hashAlgorithm");
-                       payload.contentType = request.QueryString.Get("contentType");
-                       payload.content = request.QueryString.Get("content");
-                       */
+                    payload.selector = new DynamicDictionary();
                     foreach (var param in request.QueryString)
                     {
-                        payload.dictionary[param.ToString().ToLower()] = request.QueryString.Get(param.ToString()); ;
+                        Console.WriteLine(param.ToString().ToLower());
+                        payload.dictionary[param.ToString().ToLower()] = request.QueryString.Get(param.ToString());
+                        if (param.ToString().ToLower() == "thumbprint")
+                        {
+                            payload.selector.thumbprint = request.QueryString.Get(param.ToString());
+                        }
                     }
                 }
-                Console.WriteLine(payload.version);
-                strOut = sign(payload);
+                ctx.Response.ContentType = "application/json";
+                string action = segments[1].ToLower().Replace("/", string.Empty);
+                switch (action)
+                {
+                    case ("sign"):
+                        strOut = sign(payload);
+                        break;
+                    case ("certs"):
+                        strOut = getListCerts(payload);
+                        break;
+                    case ("selectcert"):
+                        strOut = selectCert(payload);
+                        break;
+                    default:
+                        var objResp = new JObject();
+                        objResp.Add("version", "1.0");
+                        objResp.Add("status", "failed");
+                        objResp.Add("reasonCode", 404);
+                        objResp.Add("reasonText", "Actions " + action + " not exist");
+
+                        strOut = objResp.ToString();
+
+                        break;
+                }
 
             }
-            
+
             byte[] buf = Encoding.UTF8.GetBytes(strOut);
             ctx.Response.ContentLength64 = buf.Length;
             ctx.Response.OutputStream.Write(buf, 0, buf.Length);
