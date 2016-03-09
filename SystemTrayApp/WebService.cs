@@ -198,6 +198,13 @@ namespace SystemTrayApp
                 ctx.Response.OutputStream.Write(bufOut, 0, bufOut.Length);
                 return true;
             }
+            if (segments[1].ToLower().StartsWith("install"))
+            {
+                if (!Html5WebSCSTrayApp.InstallSetup.IsAdministrator()) {
+                    Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
+                    Program.exit();
+                }
+            }
             if (request.HttpMethod.ToUpper().Equals("GET"))
             {
                 ctx.Response.ContentType = "application/json";

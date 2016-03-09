@@ -101,12 +101,32 @@ namespace Html5WebSCSTrayApp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] localhost {
+            get {
+                object obj = ResourceManager.GetObject("localhost", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon SystemTrayApp {
             get {
                 object obj = ResourceManager.GetObject("SystemTrayApp", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] vSrebrinCA {
+            get {
+                object obj = ResourceManager.GetObject("vSrebrinCA", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

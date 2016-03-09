@@ -17,6 +17,8 @@ namespace SystemTrayApp
 		NotifyIcon ni;
         WebService wsHTTPRequestHandler;
         Process browserStartProc=null;
+        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessIcon"/> class.
         /// </summary>
