@@ -22,10 +22,17 @@ namespace SystemTrayApp
         [DataMember]
         public string Thumbprint;
         [DataMember]
+        public DateTime DateTimeNotAfter;
+        [DataMember]
+        public DateTime DateTimeNotBefore;
+        [DataMember]
         IList<Extension>  Extensions=new List<Extension>();
         public X509Certificate2 certificate;
         [DataMember]
         IList<string> chain = new List<string>();
+        [DataMember]
+        public bool Valid;
+
         public CertInfo(X509Certificate2 certificate)
         {
             this.certificate = certificate;
@@ -46,11 +53,11 @@ namespace SystemTrayApp
                     this.Thumbprint = x509.Thumbprint;
                     this.SerialNumber = x509.GetSerialNumberString();
                     var extensions = x509.Extensions;
-
+                    this.DateTimeNotBefore = x509.NotBefore;
+                    this.DateTimeNotAfter = x509.NotAfter;
+                    this.Valid= x509.Verify();
                     foreach (var extension in extensions)
                     {
-
-                        //Extensions += extension.Oid.FriendlyName + " " + BitConverter.ToString(extension.RawData);
                         Extensions.Add(new Extension(extension));
                     }
                 }
