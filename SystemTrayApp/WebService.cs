@@ -91,7 +91,7 @@ namespace SystemTrayApp
                         strOut = sSignerService.sign(payload);
                         break;
                     case ("certs"):
-                        strOut = sSignerService.cert(payload);
+                        strOut = sSignerService.certs(payload);
                         break;
                     case ("selectcert"):
                         strOut = sSignerService.selectCert(payload);

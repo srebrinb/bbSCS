@@ -92,16 +92,17 @@ namespace Html5WebSCSTrayApp
             }
             CertInfo certInfo;
             string json = "";
+            CertInfo ci=new CertInfo();
             foreach (X509Certificate2 x509 in fcollection)
             {
-                certInfo = new CertInfo(x509);
+                certInfo = ci.getCertInfo(x509);
                 json = certInfo.getJsonStr();
                 selectedCert = certInfo;
                 //x509.Reset();
             }
             return json;
         }
-        public string cert(dynamic payload)
+        public string certs(dynamic payload)
         {
             var objResp = new JObject();
             objResp.Add("version", version);
@@ -110,9 +111,10 @@ namespace Html5WebSCSTrayApp
 
             var arrCerts = new JArray();
             int count = 0;
+            CertInfo ci = new CertInfo();
             foreach (X509Certificate2 x509 in fcollection)
             {
-                certInfo = new CertInfo(x509);
+                certInfo = ci.getCertInfo(x509);
                 arrCerts.Add(certInfo.getJson());
                 count++;
             }
@@ -129,11 +131,11 @@ namespace Html5WebSCSTrayApp
             X509Certificate2Collection fcollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByTimeValid, DateTime.Now, false);
 
             X509Certificate2Collection scollection = X509Certificate2UI.SelectFromCollection(fcollection, "Test Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.SingleSelection);
-            CertInfo certInfo;
+            CertInfo ci=new CertInfo();
             string json = "";
             foreach (X509Certificate2 x509 in scollection)
             {
-                certInfo = new CertInfo(x509);
+                CertInfo certInfo = ci.getCertInfo(x509);
                 json = certInfo.getJsonStr();
                 selectedCert = certInfo;
                 //x509.Reset();
@@ -184,9 +186,15 @@ namespace Html5WebSCSTrayApp
                 string content = payload.content;
                 if (selectedCert == null) selectCert(payload);
                 Signer si = new Signer(selectedCert.certificate);
-                if (payload.hashAlgorithm != null) si.hashAlgorithm = payload.hashAlgorithm;
-                if (payload.contentType != null) si.contentType = payload.contentType;
-
+                try
+                {
+                    if (payload.hashAlgorithm != null) si.hashAlgorithm = payload.hashAlgorithm;
+                }
+                catch { };
+                try { 
+                    if (payload.contentType != null) si.contentType = payload.contentType;
+                }
+                catch { }
                 objResp.Add("signature", si.sign(content));
                 var arrChain = new JArray(selectedCert.getChain());
 

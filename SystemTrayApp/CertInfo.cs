@@ -29,42 +29,51 @@ namespace SystemTrayApp
         IList<Extension>  Extensions=new List<Extension>();
         public X509Certificate2 certificate;
         [DataMember]
-        IList<string> chain = new List<string>();
+        public IList<string> chain = new List<string>();
         [DataMember]
         public bool Valid;
 
-        public CertInfo(X509Certificate2 certificate)
+        private int profile=5;
+        public CertInfo getCertInfo(X509Certificate2 certificate)
         {
-            this.certificate = certificate;
+            CertInfo resCert = new CertInfo();
+            resCert.certificate = certificate;
             X509Chain ch = new X509Chain();
             ch.Build(certificate);
             var chainElements = ch.ChainElements;
             X509ChainElementEnumerator enumerator = chainElements.GetEnumerator();
             int i = 1;
-       
+
             while (enumerator.MoveNext())
             {
                 var x509ChainElement = enumerator.Current;
                 var x509 = x509ChainElement.Certificate;
                 if (i == 1)
                 {
-                    this.Subject = x509.Subject;
-                    this.Issuer = x509.Issuer;
-                    this.Thumbprint = x509.Thumbprint;
-                    this.SerialNumber = x509.GetSerialNumberString();
+                    resCert.Subject = x509.Subject;
+                    resCert.Issuer = x509.Issuer;
+                    resCert.Thumbprint = x509.Thumbprint;
+                    resCert.SerialNumber = x509.GetSerialNumberString();
                     var extensions = x509.Extensions;
-                    this.DateTimeNotBefore = x509.NotBefore;
-                    this.DateTimeNotAfter = x509.NotAfter;
-                    this.Valid= x509.Verify();
-                    foreach (var extension in extensions)
-                    {
-                        Extensions.Add(new Extension(extension));
+                    resCert.DateTimeNotBefore = x509.NotBefore;
+                    resCert.DateTimeNotAfter = x509.NotAfter;
+                    resCert.Valid = x509.Verify();
+                    if ((profile & 2) == 2) { 
+                        foreach (var extension in extensions)
+                        {
+                            resCert.Extensions.Add(new Extension(extension));
+                        }
                     }
                 }
                 i++;
-                chain.Add(System.Convert.ToBase64String(x509.GetRawCertData()));
+                if ((profile & 4) == 4)
+                {
+                    resCert.chain.Add(System.Convert.ToBase64String(x509.GetRawCertData()));
+                }
             }
+            return resCert;
         }
+        
         public JObject getJson()
         {
             return JObject.FromObject(this);
