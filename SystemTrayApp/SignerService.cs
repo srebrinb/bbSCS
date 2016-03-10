@@ -12,7 +12,7 @@ namespace Html5WebSCSTrayApp
 {
     class SignerService
     {
-        private string version="1.0";
+        private string version = "1.0";
         public string getVersion()
         {
             return version;
@@ -90,9 +90,13 @@ namespace Html5WebSCSTrayApp
                 fcollection = X509Certificate2UI.SelectFromCollection(fcollection, "Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.SingleSelection);
 
             }
+            if (fcollection.Count == 0)
+            {
+                throw new Exception("The Certificate Select was cancelled by the user");
+            }
             CertInfo certInfo;
             string json = "";
-            CertInfo ci=new CertInfo();
+            CertInfo ci = new CertInfo();
             foreach (X509Certificate2 x509 in fcollection)
             {
                 certInfo = ci.getCertInfo(x509);
@@ -122,28 +126,7 @@ namespace Html5WebSCSTrayApp
             objResp.Add("certs", arrCerts);
             return objResp.ToString();
         }
-        private string selectCert()
-        {
-            X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
-            store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
 
-            X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
-            X509Certificate2Collection fcollection = (X509Certificate2Collection)collection.Find(X509FindType.FindByTimeValid, DateTime.Now, false);
-
-            X509Certificate2Collection scollection = X509Certificate2UI.SelectFromCollection(fcollection, "Test Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.SingleSelection);
-            CertInfo ci=new CertInfo();
-            string json = "";
-            foreach (X509Certificate2 x509 in scollection)
-            {
-                CertInfo certInfo = ci.getCertInfo(x509);
-                json = certInfo.getJsonStr();
-                selectedCert = certInfo;
-                //x509.Reset();
-            }
-            store.Close();
-
-            return json;
-        }
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
@@ -151,32 +134,7 @@ namespace Html5WebSCSTrayApp
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
         }
-        public string sign(string hashB64data)
-        {
-            byte[] hash;
-            try
-            {
-                hash = StringToByteArray(hashB64data);
-            }
-            catch
-            {
-                hash = System.Convert.FromBase64String(hashB64data);
-            }
-            //  byte[] hash = System.Convert.FromBase64String(hashB64data);
-            if (selectedCert == null) selectCert();
-            RSACryptoServiceProvider csp = (RSACryptoServiceProvider)selectedCert.certificate.PrivateKey;
-            CspKeyContainerInfo cspKeyContainerInfo = csp.CspKeyContainerInfo;
-            CspParameters cspParametersTmp = new CspParameters();
-            cspParametersTmp.KeyContainerName = cspKeyContainerInfo.KeyContainerName;
-            //cspParametersTmp.KeyNumber = KeyNumber.Signature;
-            cspParametersTmp.ProviderType = cspKeyContainerInfo.ProviderType;
-            cspParametersTmp.ProviderName = cspKeyContainerInfo.ProviderName;
-            // cspParametersTmp.KeyPassword = securePwd;
-            RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
 
-            byte[] sig = rsaSignProvider.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
-            return System.Convert.ToBase64String(sig);
-        }
         public string sign(dynamic payload)
         {
             var objResp = new JObject();
@@ -184,14 +142,28 @@ namespace Html5WebSCSTrayApp
             try
             {
                 string content = payload.content;
-                if (selectedCert == null) selectCert(payload);
+                bool forceSelectCert = false;
+                try
+                {
+                    if (payload.forceSelectCert != null )
+                    {
+                        string strForceSelectCert = payload.forceSelectCert;
+                        strForceSelectCert = strForceSelectCert.ToLower();
+                        if (strForceSelectCert == "true" || strForceSelectCert == "yes") {
+                            forceSelectCert = true;
+                        }
+                    }
+                }
+                catch { };
+            if (selectedCert == null|| forceSelectCert) selectCert(payload);
                 Signer si = new Signer(selectedCert.certificate);
                 try
                 {
-                    if (payload.hashAlgorithm != null) si.hashAlgorithm = payload.hashAlgorithm;
+                    if (payload.hashAlgorithm != null) si.HashAlgorithm = payload.hashAlgorithm;
                 }
                 catch { };
-                try { 
+                try
+                {
                     if (payload.contentType != null) si.contentType = payload.contentType;
                 }
                 catch { }
@@ -202,7 +174,7 @@ namespace Html5WebSCSTrayApp
                 objResp.Add("reasonCode", 200);
                 objResp.Add("reasonText", "Signature generated");
 
-                objResp.Add("signatureAlgorithm", si.hashAlgorithm + "withRSA");
+                objResp.Add("signatureAlgorithm", si.HashAlgorithm + "withRSA");
                 objResp.Add("chain", arrChain);
             }
             catch (Exception e)
@@ -211,12 +183,50 @@ namespace Html5WebSCSTrayApp
                 objResp.Add("status", "failed");
                 objResp.Add("reasonCode", 500);
                 objResp.Add("reasonText", e.Message);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
             }
             return objResp.ToString();
         }
+        public string Validate(dynamic payload)
+        {
+            var objResp = new JObject();
+            objResp.Add("version", version);
+            try
+            {
+                string content = payload.content;
+                string signature = payload.signature;
+                JArray arr = payload.chain;
+                string cert = arr[0].ToString(); 
+                Signer si = new Signer(cert);
+                try
+                {
+                    string signatureAlgorithm= "SHA1withRSA";
+                    if (payload.signatureAlgorithm != null) signatureAlgorithm = payload.signatureAlgorithm;
+                    si.HashAlgorithm = signatureAlgorithm.Replace("withRSA",string.Empty);
+                }
+                catch { };
+                try
+                {
+                    if (payload.contentType != null) si.contentType = payload.contentType;
+                }
+                catch { }
+                bool res=si.verify(content, signature);
+                objResp.Add("result", res);
+            }
+            catch (Exception e)
+            {
+                selectedCert = null;
+                objResp.Add("status", "failed");
+                objResp.Add("reasonCode", 500);
+                objResp.Add("reasonText", e.Message);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
+            }
+            return objResp.ToString();
+
+        }
         public string Version()
         {
-            string resp= "{\"version\": \"1.0\",\"httpMethods\": \"GET, POST\",\"contentTypes\": \"data, digest\",\"signatureTypes\": \"signature\",\"selectorAvailable\": true,\"hashAlgorithms\": \"SHA1, SHA256, SHA384, SHA512\"}";
+            string resp = "{\"version\": \"1.0\",\"httpMethods\": \"GET, POST\",\"contentTypes\": \"data, digest\",\"signatureTypes\": \"signature\",\"selectorAvailable\": true,\"hashAlgorithms\": \"SHA1, SHA256, SHA384, SHA512\"}";
             return resp;
         }
         public string unkonwAction(string action)
@@ -227,7 +237,7 @@ namespace Html5WebSCSTrayApp
             objResp.Add("reasonCode", 404);
             objResp.Add("reasonText", "Actions " + action + " not exist");
             var objRespActions = new JObject();
-            objRespActions.Add("SelectCert","Select certificate for signer");
+            objRespActions.Add("SelectCert", "Select certificate for signer");
             objRespActions.Add("Sign", "Signnig contents");
             objRespActions.Add("Certs", "Get list certs");
             objRespActions.Add("Version", "The version check SCS");

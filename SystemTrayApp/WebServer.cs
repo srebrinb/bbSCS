@@ -60,6 +60,7 @@ namespace SystemTrayApp
                                 byte[] buf = Encoding.UTF8.GetBytes(e.Message);
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+                                Console.WriteLine(e.Message+"\n"+e.StackTrace + "\n" + e.Source);
                             } // suppress any exceptions
                             finally
                             {

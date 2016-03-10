@@ -29,7 +29,7 @@ namespace SystemTrayApp
             { ".gif", "image/gif" },
             { ".svg", "image/svg+xml" }
         };
-
+        private SignerService sSignerService = new SignerService();
         public static byte[] ReadFully(Stream input)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -98,7 +98,7 @@ namespace SystemTrayApp
                     }
                     ctx.Response.ContentType = "application/json";
                     string action = segments[1].ToLower().Replace("/", string.Empty);
-                    SignerService sSignerService = new SignerService();
+                    
                     switch (action)
                     {
                         case ("sign"):
@@ -109,6 +109,9 @@ namespace SystemTrayApp
                             break;
                         case ("selectcert"):
                             strOut = sSignerService.selectCert(payload);
+                            break;
+                        case ("validate"):
+                            strOut = sSignerService.Validate (payload);
                             break;
                         case ("version"):
                             strOut = sSignerService.Version();
@@ -129,31 +132,33 @@ namespace SystemTrayApp
             }
             if (buf.Length == 0)
             {
-                try { 
-                string filename = "htmls";
-                if (segments[segments.Length - 1].EndsWith("/"))
+                try
                 {
-                    segments[segments.Length - 1] += "index.html";
-                }
-                if (segments[segments.Length - 1].EndsWith(".ico"))
-                {
-
-                    Resources.html5Paraf.Save(ctx.Response.OutputStream);
-                    return true;
-                }
-                else {
-                    filename += String.Join("", segments);
-
-                    string extension = Path.GetExtension(filename);
-                    string mimeType = "text/html";
-                    MimeTypesForExtensions.TryGetValue(extension.ToLower(), out mimeType);
-                    ctx.Response.ContentType = mimeType;
-                    using (FileStream fsSource = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                    string filename = "htmls";
+                    if (segments[segments.Length - 1].EndsWith("/"))
                     {
-                        buf = ReadFully(fsSource);
+                        segments[segments.Length - 1] += "index.html";
+                    }
+                    if (segments[segments.Length - 1].EndsWith(".ico"))
+                    {
+
+                        Resources.html5Paraf.Save(ctx.Response.OutputStream);
+                        return true;
+                    }
+                    else {
+                        filename += String.Join("", segments);
+
+                        string extension = Path.GetExtension(filename);
+                        string mimeType = "text/html";
+                        MimeTypesForExtensions.TryGetValue(extension.ToLower(), out mimeType);
+                        ctx.Response.ContentType = mimeType;
+                        using (FileStream fsSource = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                        {
+                            buf = ReadFully(fsSource);
+                        }
                     }
                 }
-                }catch(Exception e)
+                catch (Exception e)
                 {
                     ctx.Response.StatusCode = 404;
                     buf = Encoding.UTF8.GetBytes(e.Message);
