@@ -95,12 +95,10 @@ namespace SystemTrayApp
         {
             byte[] hashedData = processContent(content);
             byte[]  signatureBytes = System.Convert.FromBase64String(signature);
-            
             RSACryptoServiceProvider rsaVerifyProvider = (RSACryptoServiceProvider)cert.PublicKey.Key;
-
             return rsaVerifyProvider.VerifyHash(hashedData, CryptoConfig.MapNameToOID(HashAlgorithm), signatureBytes);
-
         }
+        
 
     }
 }

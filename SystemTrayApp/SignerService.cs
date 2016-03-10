@@ -145,17 +145,18 @@ namespace Html5WebSCSTrayApp
                 bool forceSelectCert = false;
                 try
                 {
-                    if (payload.forceSelectCert != null )
+                    if (payload.forceSelectCert != null)
                     {
                         string strForceSelectCert = payload.forceSelectCert;
                         strForceSelectCert = strForceSelectCert.ToLower();
-                        if (strForceSelectCert == "true" || strForceSelectCert == "yes") {
+                        if (strForceSelectCert == "true" || strForceSelectCert == "yes")
+                        {
                             forceSelectCert = true;
                         }
                     }
                 }
                 catch { };
-            if (selectedCert == null|| forceSelectCert) selectCert(payload);
+                if (selectedCert == null || forceSelectCert) selectCert(payload);
                 Signer si = new Signer(selectedCert.certificate);
                 try
                 {
@@ -196,13 +197,13 @@ namespace Html5WebSCSTrayApp
                 string content = payload.content;
                 string signature = payload.signature;
                 JArray arr = payload.chain;
-                string cert = arr[0].ToString(); 
+                string cert = arr[0].ToString();
                 Signer si = new Signer(cert);
                 try
                 {
-                    string signatureAlgorithm= "SHA1withRSA";
+                    string signatureAlgorithm = "SHA1withRSA";
                     if (payload.signatureAlgorithm != null) signatureAlgorithm = payload.signatureAlgorithm;
-                    si.HashAlgorithm = signatureAlgorithm.Replace("withRSA",string.Empty);
+                    si.HashAlgorithm = signatureAlgorithm.Replace("withRSA", string.Empty);
                 }
                 catch { };
                 try
@@ -210,7 +211,7 @@ namespace Html5WebSCSTrayApp
                     if (payload.contentType != null) si.contentType = payload.contentType;
                 }
                 catch { }
-                bool res=si.verify(content, signature);
+                bool res = si.verify(content, signature);
                 objResp.Add("result", res);
             }
             catch (Exception e)
@@ -223,6 +224,36 @@ namespace Html5WebSCSTrayApp
             }
             return objResp.ToString();
 
+        }
+        public string certinfo(dynamic payload)
+        {
+            var objResp = new JObject();
+            objResp.Add("version", version);
+            try
+            {
+                string cert = "";
+                string profiles = "base";
+                if (payload.certX509 != null) cert = payload.certX509;
+                try
+                {
+                    if (payload.profile != null) profiles = payload.profile;
+                }
+                catch { }
+                Profiles profile = CertInfo.getProfile(profiles);
+                CertInfo certinfo = new CertInfo(profile);
+
+                return certinfo.getCertInfo(cert).getJsonStr();
+
+            }
+            catch (Exception e)
+            {
+                selectedCert = null;
+                objResp.Add("status", "failed");
+                objResp.Add("reasonCode", 500);
+                objResp.Add("reasonText", e.Message);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
+            }
+            return objResp.ToString();
         }
         public string Version()
         {
@@ -241,6 +272,7 @@ namespace Html5WebSCSTrayApp
             objRespActions.Add("Sign", "Signnig contents");
             objRespActions.Add("Certs", "Get list certs");
             objRespActions.Add("Version", "The version check SCS");
+            objRespActions.Add("validate", "Validate signature");
             objResp.Add("Accept-Action", objRespActions);
             return objResp.ToString();
         }

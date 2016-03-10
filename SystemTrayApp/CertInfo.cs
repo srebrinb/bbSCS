@@ -10,6 +10,14 @@ using System.Text;
 
 namespace SystemTrayApp
 {
+    [Flags]
+    public enum Profiles
+    {   none=0,
+        @base = 1,
+        extensions = 2,
+        chain = 4,
+        certx509 = 8
+    }
     [DataContract]
     class CertInfo
     {
@@ -22,9 +30,9 @@ namespace SystemTrayApp
         [DataMember]
         public string Thumbprint;
         [DataMember]
-        public DateTime DateTimeNotAfter;
+        public string DateTimeNotAfter;
         [DataMember]
-        public DateTime DateTimeNotBefore;
+        public string DateTimeNotBefore;
         [DataMember]
         IList<Extension>  Extensions=new List<Extension>();
         public X509Certificate2 certificate;
@@ -40,15 +48,9 @@ namespace SystemTrayApp
         4) + Chain
         default 5) Base + Chain
         */
-        [Flags]
-        public enum Profiles
-        {
-            Base = 1,
-            Extensions = 2,
-            Chain = 4,
-            CertX509 = 8
-        }
-        private Profiles profile = Profiles.Base| Profiles.Chain;
+       
+        
+        private Profiles profile = Profiles.@base| Profiles.chain;
         public CertInfo() { }
         /// <summary>
         /// 
@@ -63,6 +65,36 @@ namespace SystemTrayApp
         public CertInfo(Profiles profile)
         {
             this.profile = profile;
+        }
+        public CertInfo getCertInfo(string strCert)
+        {
+            X509Certificate2 certificate= new X509Certificate2(System.Convert.FromBase64String(strCert));
+            return getCertInfo(certificate);
+        }
+        public static Profiles getProfile(string profiles)
+        {
+            string[] profilesStrings = profiles.Split(',');
+            Profiles profile = Profiles.none;
+            foreach (string profileString in profilesStrings)
+            {
+                try
+                {
+
+                    Profiles profileValue = (Profiles)Enum.Parse(typeof(Profiles), profileString.ToLower().Trim());
+                    if (Enum.IsDefined(typeof(Profiles), profileValue) | profileValue.ToString().Contains(","))
+                    {
+                        Console.WriteLine("Converted '{0}' to {1}.", profileValue, profileValue.ToString());
+                        profile = profile | profileValue;
+                    }
+                    else
+                        Console.WriteLine("{0} is not an underlying value of the Colors enumeration.", profileString);
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("'{0}' is not a member of the Colors enumeration.", profileString);
+                }
+            }
+            return profile;
         }
         public CertInfo getCertInfo(X509Certificate2 certificate)
         {
@@ -85,13 +117,13 @@ namespace SystemTrayApp
                     resCert.Thumbprint = x509.Thumbprint;
                     resCert.SerialNumber = x509.GetSerialNumberString();
                     
-                    resCert.DateTimeNotBefore = x509.NotBefore;
-                    resCert.DateTimeNotAfter = x509.NotAfter;
+                    resCert.DateTimeNotBefore = x509.NotBefore.ToString("s");
+                    resCert.DateTimeNotAfter = x509.NotAfter.ToString("s"); ;
                     resCert.Valid = x509.Verify();
-                    if (profile.HasFlag(Profiles.CertX509)) { 
+                    if (profile.HasFlag(Profiles.certx509)) { 
                         resCert.CertX509 = System.Convert.ToBase64String(x509.GetRawCertData());
                     }
-                    if (profile.HasFlag(Profiles.Extensions)) {
+                    if (profile.HasFlag(Profiles.extensions)) {
                         var extensions = x509.Extensions;
                         foreach (var extension in extensions)
                         {
@@ -100,7 +132,7 @@ namespace SystemTrayApp
                     }
                 }
                 i++;
-                if (profile.HasFlag(Profiles.Chain))
+                if (profile.HasFlag(Profiles.chain))
                 {
                     resCert.chain.Add(System.Convert.ToBase64String(x509.GetRawCertData()));
                 }

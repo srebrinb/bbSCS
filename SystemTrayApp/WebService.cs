@@ -113,6 +113,9 @@ namespace SystemTrayApp
                         case ("validate"):
                             strOut = sSignerService.Validate (payload);
                             break;
+                        case ("certinfo"):
+                            strOut = sSignerService.certinfo(payload);
+                            break;
                         case ("version"):
                             strOut = sSignerService.Version();
                             break;
