@@ -33,15 +33,16 @@ namespace SystemTrayApp
         public string DateTimeNotAfter;
         [DataMember]
         public string DateTimeNotBefore;
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         IList<Extension>  Extensions=new List<Extension>();
         public X509Certificate2 certificate;
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public IList<string> chain = new List<string>();
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         public string CertX509="";
         [DataMember]
         public bool Valid;
+
         /*profiles:
         1) Base
         2) + Extensions
@@ -127,6 +128,7 @@ namespace SystemTrayApp
                         var extensions = x509.Extensions;
                         foreach (var extension in extensions)
                         {
+                           
                             resCert.Extensions.Add(new Extension(extension));
                         }
                     }
