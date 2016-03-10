@@ -12,6 +12,7 @@ using System.Runtime.Serialization.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Html5WebSCSTrayApp;
+using Html5WebSCSTrayApp.Properties;
 
 namespace SystemTrayApp
 {
@@ -128,20 +129,34 @@ namespace SystemTrayApp
             }
             if (buf.Length == 0)
             {
+                try { 
                 string filename = "htmls";
-                if (segments[segments.Length - 1].EndsWith ("/"))
+                if (segments[segments.Length - 1].EndsWith("/"))
                 {
                     segments[segments.Length - 1] += "index.html";
                 }
-                filename += String.Join("", segments);
-
-                string extension = Path.GetExtension(filename);
-                string mimeType = "text/html";
-                MimeTypesForExtensions.TryGetValue(extension.ToLower(), out mimeType);
-                ctx.Response.ContentType = mimeType;
-                using (FileStream fsSource = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                if (segments[segments.Length - 1].EndsWith(".ico"))
                 {
-                    buf = ReadFully(fsSource);
+
+                    Resources.html5Paraf.Save(ctx.Response.OutputStream);
+                    return true;
+                }
+                else {
+                    filename += String.Join("", segments);
+
+                    string extension = Path.GetExtension(filename);
+                    string mimeType = "text/html";
+                    MimeTypesForExtensions.TryGetValue(extension.ToLower(), out mimeType);
+                    ctx.Response.ContentType = mimeType;
+                    using (FileStream fsSource = new FileStream(filename, FileMode.Open, FileAccess.Read))
+                    {
+                        buf = ReadFully(fsSource);
+                    }
+                }
+                }catch(Exception e)
+                {
+                    ctx.Response.StatusCode = 404;
+                    buf = Encoding.UTF8.GetBytes(e.Message);
                 }
             }
             ctx.Response.ContentLength64 = buf.Length;

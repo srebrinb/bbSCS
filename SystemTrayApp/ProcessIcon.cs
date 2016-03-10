@@ -72,7 +72,7 @@ namespace SystemTrayApp
 			{
                 if (browserStartProc == null)
                 {
-                    browserStartProc = Process.Start("http://localhost:53951/UI", null);
+                    browserStartProc = Process.Start("http://localhost:53951/", null);
                 }
                 else
                 {
