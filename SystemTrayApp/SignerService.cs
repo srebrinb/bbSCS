@@ -170,6 +170,7 @@ namespace Html5WebSCSTrayApp
                     if (payload.contentType != null) si.contentType = payload.contentType;
                 }
                 catch { }
+                
                 objResp.Add("signature", si.sign(content));
                 var arrChain = new JArray(selectedCert.getChain());
 

@@ -1,4 +1,6 @@
-﻿using System.Security;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -72,6 +74,42 @@ namespace Html5WebSCSTrayApp
             }
             return res;
         }
+        [DllImport("Advapi32.dll", SetLastError = true)]
+        public static extern bool CryptSetProvParam(IntPtr hProv, uint dwParam, IntPtr pvData, uint dwFlags);
+
+        [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool CryptAcquireContext(ref IntPtr hProv,
+            string pszContainer, string pszProvider, uint dwProvType, uint dwFlags);
+
+        [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern void CryptReleaseContext(IntPtr hProv, uint dwFlags);
+
+        static public bool ClearPINCache2(RSACryptoServiceProvider key)
+        {
+            const uint PP_KEYEXCHANGE_PIN = 32;
+            const uint PP_SIGNATURE_PIN = 33;
+            bool bretval = false;
+
+            IntPtr hProv = IntPtr.Zero;
+
+            if (CryptAcquireContext(ref hProv, key.CspKeyContainerInfo.KeyContainerName,
+                key.CspKeyContainerInfo.ProviderName, (uint)key.CspKeyContainerInfo.ProviderType, 0))
+            {
+                if ((CryptSetProvParam(hProv, PP_KEYEXCHANGE_PIN, IntPtr.Zero, 0) == true) &&
+                    (CryptSetProvParam(hProv, PP_SIGNATURE_PIN, IntPtr.Zero, 0) == true))
+                {
+                    bretval = true;
+                }
+            }
+
+            if (hProv != IntPtr.Zero)
+            {
+                CryptReleaseContext(hProv, 0);
+                hProv = IntPtr.Zero;
+            }
+
+            return bretval;
+        }
         public string sign(string content)
         {
             byte[] hashContent = processContent(content);
@@ -86,10 +124,17 @@ namespace Html5WebSCSTrayApp
             if (securePwd!=null) {
                  cspParametersTmp.KeyPassword = securePwd;
             }
-            RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
-
+            cspParametersTmp.Flags = CspProviderFlags.UseUserProtectedKey;
+            csp.Clear();
+                RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
+            //RSACryptoServiceProvider rsaSignProvider = (RSACryptoServiceProvider)cert.PrivateKey;
+            
             byte[] sig = rsaSignProvider.SignHash(hashContent, CryptoConfig.MapNameToOID(HashAlgorithm));
+            rsaSignProvider.Clear();
+            rsaSignProvider.Dispose();
+            ClearPINCache2(rsaSignProvider);
             return System.Convert.ToBase64String(sig);
+
         }
         public bool verify(string content,string signature)
         {
