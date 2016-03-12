@@ -11,6 +11,8 @@ namespace Html5WebSCSTrayApp
     /// </summary>
     class ProcessIcon : IDisposable
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// The NotifyIcon object.
         /// </summary>
@@ -33,7 +35,7 @@ namespace Html5WebSCSTrayApp
         /// <summary>
         /// Displays the icon in the system tray.
         /// </summary>
-        public void Display()
+        public bool Display()
         {
             // Put the icon in the system tray and allow it react to mouse clicks.			
             ni.MouseClick += new MouseEventHandler(ni_MouseClick);
@@ -51,10 +53,13 @@ namespace Html5WebSCSTrayApp
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
-                Program.exit();
+                log.Error(e.Message);
+                MessageBox.Show("Install & Setings Web Access SSLCert");
+                Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
+                
+                return false;
             }
-
+            return true;
         }
 
         /// <summary>

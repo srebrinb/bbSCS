@@ -33,9 +33,14 @@ namespace Html5WebSCSTrayApp
 			item.Click += new EventHandler(InstallSSLCert_Click);
             item.Image = Resources.ssl_certificates;
 			menu.Items.Add(item);
-
-			// About.
-			item = new ToolStripMenuItem();
+            // About.
+            item = new ToolStripMenuItem();
+            item.Text = "View Log";
+            item.Click += new EventHandler(ViewLog_Click);
+            
+            menu.Items.Add(item);
+            // About.
+            item = new ToolStripMenuItem();
 			item.Text = "About";
 			item.Click += new EventHandler(About_Click);
 			item.Image = Resources.About;
@@ -63,17 +68,18 @@ namespace Html5WebSCSTrayApp
 		void InstallSSLCert_Click(object sender, EventArgs e)
 		{
             Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
-            Program.exit();
-            Process.Start("http://localhost:53951/install", null);
-
+            Application.Exit();
         }
-
-		/// <summary>
-		/// Handles the Click event of the About control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void About_Click(object sender, EventArgs e)
+        void ViewLog_Click(object sender, EventArgs e)
+        {
+            Process.Start("log4net.log", null);
+        }
+        /// <summary>
+        /// Handles the Click event of the About control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        void About_Click(object sender, EventArgs e)
 		{
             About_Show();
 

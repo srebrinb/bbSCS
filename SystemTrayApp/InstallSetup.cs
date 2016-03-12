@@ -15,6 +15,8 @@ namespace Html5WebSCSTrayApp
 {
     class InstallSetup
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static string installCets()
         {
             string thump = "";
@@ -23,6 +25,7 @@ namespace Html5WebSCSTrayApp
             X509Certificate2 rootCert = new X509Certificate2(Resources.vSrebrinCA);
             store.Add(rootCert);
             store.Close();
+            log.InfoFormat("Install certs CA {0} thmp:{1}", rootCert.Subject, rootCert.Thumbprint);
             rootCert.Reset();
             X509Store mystore = new X509Store("My", StoreLocation.LocalMachine);
             mystore.Open(OpenFlags.ReadWrite);
@@ -30,6 +33,8 @@ namespace Html5WebSCSTrayApp
             mystore.Add(Cert);
             mystore.Close();
             thump= Cert.Thumbprint;
+            
+            log.InfoFormat("Install certs Cert {0} thmp:{1}", Cert.Subject,thump);
             Cert.Reset();
             return thump;
         }
@@ -37,25 +42,45 @@ namespace Html5WebSCSTrayApp
         {
             string args=String.Format( "http add sslcert ipport={0} certhash={1} appid={{{2}}}"
                            ,address,thump.ToLower(),getGUID());
-            
+
+
+            execNetsh(args);
+
+        }
+        public static void execNetsh(string cmdArgs)
+        {
+            log.InfoFormat("netsh {0}", cmdArgs);
             ProcessStartInfo proc = new ProcessStartInfo();
-            proc.UseShellExecute = true;
+            proc.UseShellExecute = false;
             proc.WorkingDirectory = Environment.CurrentDirectory;
             proc.FileName = "netsh";
-            proc.Arguments = args;
-            proc.Verb = "runas";
-            
+            proc.Arguments = cmdArgs;
+            //  proc.Verb = "runas";
+            proc.CreateNoWindow = true;
+            proc.WindowStyle = ProcessWindowStyle.Hidden;
+              proc.RedirectStandardOutput = true;
+            proc.RedirectStandardError = true;
+            Process p = new Process();
+            p.StartInfo = proc;
+            string output = "";
+            string error = "";
             try
             {
-                Process.Start(proc);
+                p.Start();
+
+                // To avoid deadlocks, always read the output stream first and then wait.
+                output = p.StandardOutput.ReadToEnd();
+                error = p.StandardError.ReadToEnd();
+                p.WaitForExit();
+                log.Debug (output);
+
             }
-            catch
+            catch (Exception ex)
             {
-                // The user refused the elevation.
-                // Do nothing and return directly ...
+                log.Error(cmdArgs,ex);
+                log.Debug(error);
                 return;
             }
-            
         }
         public static void setACLs(string[] address)
         {
@@ -65,24 +90,7 @@ namespace Html5WebSCSTrayApp
         public static void setACL(string address)
         {
             string args = String.Format("http add urlacl {0} user=\\Everyone", address);
-
-            ProcessStartInfo proc = new ProcessStartInfo();
-            proc.UseShellExecute = true;
-            proc.WorkingDirectory = Environment.CurrentDirectory;
-            proc.FileName = "netsh";
-            proc.Arguments = args;
-            proc.Verb = "runas";
-
-            try
-            {
-                Process.Start(proc);
-            }
-            catch
-            {
-                // The user refused the elevation.
-                // Do nothing and return directly ...
-                return;
-            }
+            execNetsh(args);
         }
         public static void runAs(string cmd)
         {

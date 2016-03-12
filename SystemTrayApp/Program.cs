@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Html5WebSCSTrayApp
@@ -32,7 +33,7 @@ namespace Html5WebSCSTrayApp
                 string tump = Html5WebSCSTrayApp.InstallSetup.installCets();
                 Html5WebSCSTrayApp.InstallSetup.setACLs(prefix);
                 Html5WebSCSTrayApp.InstallSetup.setCert(tump, "127.0.0.1:53952");
-                
+                Process.Start("https://localhost:53952/", null);
 
             }
             // Show the system tray icon.					
@@ -40,18 +41,24 @@ namespace Html5WebSCSTrayApp
             {
                 try
                 {
-                    pi.Display();
-                    Application.Run();
+                    if (pi.Display())
+                    {
+                        Application.Run();
+                    }
+                    else
+                    {
+                        Application.Exit();
+                    }
                 }
                 catch (Exception e)
                 {
                     log.Error(e.Message, e);
                     exit();
                 }
-                
+
 
                 // Make sure the application runs!
-                
+
             }
         }
         static void CurrentDomain_ProcessExit(object sender, EventArgs e)
