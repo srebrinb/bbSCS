@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Windows.Forms;
 
 namespace Html5WebSCSTrayApp
@@ -12,7 +13,10 @@ namespace Html5WebSCSTrayApp
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public static string productName= Application.ProductName;
         public static string executablePath = Application.ExecutablePath;
+        
+
         public static string[] prefix = { "http://127.0.0.1:53951/", "https://127.0.0.1:53952/" };
+        public static Properties.Settings settings = new Properties.Settings();
         public static void exit()
         {
             Application.Exit();
@@ -23,17 +27,22 @@ namespace Html5WebSCSTrayApp
         [STAThread]
         static void Main()
         {
-            
+            Properties.Settings settings = new Properties.Settings();
+            prefix[0] = settings.httpUri;
+            prefix[1] = settings.httpsUri;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+            
 
             if (Html5WebSCSTrayApp.InstallSetup.IsAdministrator())
             {
                 string tump = Html5WebSCSTrayApp.InstallSetup.installCets();
                 Html5WebSCSTrayApp.InstallSetup.setACLs(prefix);
-                Html5WebSCSTrayApp.InstallSetup.setCert(tump, "127.0.0.1:53952");
-                Process.Start("https://localhost:53952/", null);
+                Uri https = new Uri(settings.httpsUri);
+                string ip = Dns.GetHostEntry(https.Host).AddressList[0].ToString();
+                Html5WebSCSTrayApp.InstallSetup.setCert(tump, ip+":"+ https.Port);
+                Process.Start(settings.httpsUri, null);
             }
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())

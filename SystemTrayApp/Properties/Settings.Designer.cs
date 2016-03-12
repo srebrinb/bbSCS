@@ -22,5 +22,35 @@ namespace Html5WebSCSTrayApp.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("true")]
+        public string PINCache {
+            get {
+                return ((string)(this["PINCache"]));
+            }
+            set {
+                this["PINCache"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:53951/")]
+        public string httpUri {
+            get {
+                return ((string)(this["httpUri"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://localhost:53952/")]
+        public string httpsUri {
+            get {
+                return ((string)(this["httpsUri"]));
+            }
+        }
     }
 }

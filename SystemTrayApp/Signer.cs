@@ -132,7 +132,8 @@ namespace Html5WebSCSTrayApp
             byte[] sig = rsaSignProvider.SignHash(hashContent, CryptoConfig.MapNameToOID(HashAlgorithm));
             rsaSignProvider.Clear();
             rsaSignProvider.Dispose();
-            ClearPINCache2(rsaSignProvider);
+            Properties.Settings setting = new Properties.Settings();
+            if(setting.PINCache!="true")     ClearPINCache2(rsaSignProvider);
             return System.Convert.ToBase64String(sig);
 
         }

@@ -88,11 +88,11 @@ namespace Html5WebSCSTrayApp
         }
         void OpenWeb_Click(object sender, EventArgs e)
         {
-            Process.Start("http://localhost:53951/", null);
+            Process.Start(Program.settings.httpUri, null);
         }
         void OpenSSL_Click(object sender, EventArgs e)
         {
-            Process.Start("https://localhost:53952/", null);
+            Process.Start(Program.settings.httpsUri, null);
         }
         void ViewLog_Click(object sender, EventArgs e)
         {
