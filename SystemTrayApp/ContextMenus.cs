@@ -22,36 +22,52 @@ namespace Html5WebSCSTrayApp
 		/// <returns>ContextMenuStrip</returns>
 		public ContextMenuStrip Create()
 		{
-			// Add the default menu options.
-			ContextMenuStrip menu = new ContextMenuStrip();
+            // Add the default menu options.
+            ContextMenuStrip menu = new ContextMenuStrip();
 			ToolStripMenuItem item;
 			ToolStripSeparator sep;
+            ToolStripLabel label = new ToolStripLabel();
+            label.Text = Application.ProductName;
 
-			// Windows Explorer.
-			item = new ToolStripMenuItem();
-			item.Text = "Install SSL cert";
-			item.Click += new EventHandler(InstallSSLCert_Click);
-            item.Image = Resources.ssl_certificates;
-			menu.Items.Add(item);
-            // About.
-            item = new ToolStripMenuItem();
-            item.Text = "View Log";
-            item.Click += new EventHandler(ViewLog_Click);
+            menu.Items.Add(label);
+
+            sep = new ToolStripSeparator();
+            menu.Items.Add(sep);
             
+            item = new ToolStripMenuItem();
+            item.Text = "View Web";
+            item.Click += new EventHandler(OpenWeb_Click);
             menu.Items.Add(item);
-            // About.
+            item = new ToolStripMenuItem();
+            item.Text = "View SSL Web";
+            item.Click += new EventHandler(OpenSSL_Click);
+            menu.Items.Add(item);
+            menu.Items.Add(new ToolStripSeparator());
             item = new ToolStripMenuItem();
 			item.Text = "About";
 			item.Click += new EventHandler(About_Click);
 			item.Image = Resources.About;
 			menu.Items.Add(item);
+            item = new ToolStripMenuItem();
+            item.Text = "Log";
+            item.Click += new EventHandler(ViewLog_Click);
+            menu.Items.Add(item);
+            item = new ToolStripMenuItem();
+            item.Text = "Install SSL cert";
+            item.Click += new EventHandler(InstallSSLCert_Click);
+            item.Image = Resources.ssl_certificates;
+            menu.Items.Add(item);
+            ToolStripButton itemComboBox = new ToolStripButton();
+            itemComboBox.Text = "Startup";
+            itemComboBox.CheckOnClick = true;
+            itemComboBox.Checked = InstallSetup.GetStartup();
+      //      itemComboBox.Click += new System.EventHandler(Startup_Click);
+            itemComboBox.CheckedChanged += new System.EventHandler(Startup_Click);
+            menu.Items.Add(itemComboBox);
+            menu.Items.Add(new ToolStripSeparator());
 
-			// Separator.
-			sep = new ToolStripSeparator();
-			menu.Items.Add(sep);
-
-			// Exit.
-			item = new ToolStripMenuItem();
+            // Exit.
+            item = new ToolStripMenuItem();
 			item.Text = "Exit";
 			item.Click += new System.EventHandler(Exit_Click);
 			item.Image = Resources.Exit;
@@ -69,6 +85,14 @@ namespace Html5WebSCSTrayApp
 		{
             Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
             Application.Exit();
+        }
+        void OpenWeb_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://localhost:53951/", null);
+        }
+        void OpenSSL_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://localhost:53952/", null);
         }
         void ViewLog_Click(object sender, EventArgs e)
         {
@@ -104,5 +128,9 @@ namespace Html5WebSCSTrayApp
 			// Quit without further ado.
 			Application.Exit();
 		}
-	}
+        void Startup_Click(object sender, EventArgs e)
+        {
+            InstallSetup.SetStartup(!InstallSetup.GetStartup());
+        }
+    }
 }

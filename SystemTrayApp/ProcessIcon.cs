@@ -80,7 +80,10 @@ namespace Html5WebSCSTrayApp
         {
             // Handle mouse button clicks.
             if (e.Button == MouseButtons.Left)
+
             {
+                ni.ContextMenuStrip.Update();
+                /*
                 if (browserStartProc == null)
                 {
                     browserStartProc = Process.Start("http://localhost:53951/", null);
@@ -89,6 +92,7 @@ namespace Html5WebSCSTrayApp
                 {
                     browserStartProc.Refresh();
                 }
+                */
             }
         }
         void OnDestroy()

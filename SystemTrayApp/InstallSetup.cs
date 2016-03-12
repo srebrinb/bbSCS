@@ -1,4 +1,5 @@
 ﻿using Html5WebSCSTrayApp.Properties;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -72,13 +73,13 @@ namespace Html5WebSCSTrayApp
                 output = p.StandardOutput.ReadToEnd();
                 error = p.StandardError.ReadToEnd();
                 p.WaitForExit();
-                log.Debug (output);
+                log.Debug (output.Trim('\r').Trim('\n'));
 
             }
             catch (Exception ex)
             {
                 log.Error(cmdArgs,ex);
-                log.Debug(error);
+                log.Debug(error.Trim('\r').Trim('\n'));
                 return;
             }
         }
@@ -143,6 +144,26 @@ namespace Html5WebSCSTrayApp
             }
 
             return false;
+        }
+        public static bool GetStartup()
+        {
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey
+                ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+           return (rk.GetValue(Program.productName)!= null);
+        }
+        public static bool SetStartup(bool chkStartUp)
+        {
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey
+                ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+            if (chkStartUp) {
+                rk.SetValue(Program.productName, Program.executablePath);
+                return true;
+            }
+            else { 
+                rk.DeleteValue(Program.productName, false);
+                return false;
+            }
         }
     }
 
