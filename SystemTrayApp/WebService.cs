@@ -33,6 +33,14 @@ namespace Html5WebSCSTrayApp
             { ".svg", "image/svg+xml" }
         };
         private SignerService sSignerService = new SignerService();
+        private string sessionid = "";
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
         public static byte[] ReadFully(Stream input)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -47,7 +55,30 @@ namespace Html5WebSCSTrayApp
             //  HttpListenerResponse response=ctx.Response;
             log.InfoFormat("request ssl {2} {0} {1}", request.HttpMethod, request.RawUrl, ctx.Request.IsSecureConnection);
 
+            
+            
+            var cookies = ctx.Request.Cookies;
+            foreach (Cookie cookie in cookies)
+            {
+                Console.WriteLine(cookie.Name + ":" + cookie.Value);
+                if (cookie.Name.Equals("ssession")) sessionid = cookie.Value;
+            }
+            if (sessionid=="")
+            {
+                sessionid = RandomString(32);
+                Cookie sessCookie = new Cookie("ssession", sessionid);
+                sessCookie.HttpOnly = true;
+                sessCookie.Path = "/";
+                sessCookie.Domain = request.UserHostName;
+                if (ctx.Request.IsSecureConnection) sessCookie.Secure = true;
+                ctx.Response.Cookies.Add(sessCookie);
+            }
             Options(ctx);
+            if (request.HttpMethod.ToUpper().Equals("OPTIONS"))
+            {
+                return true;
+
+            }
             dynamic payload;
             string strOut = "";
             byte[] buf = Encoding.UTF8.GetBytes(strOut);
@@ -73,10 +104,7 @@ namespace Html5WebSCSTrayApp
                         return false;
                     }
                 }
-                if (request.HttpMethod.ToUpper().Equals("OPTIONS")){
-                    return true;
-
-                }
+                
                 if (segments[1].ToLower().StartsWith ("bytes"))
                 {
                     buf = Encoding.UTF8.GetBytes("test ok");
