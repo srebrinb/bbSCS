@@ -6,12 +6,14 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using SystemTrayApp;
+using Html5WebSCSTrayApp;
 
 namespace Html5WebSCSTrayApp
 {
     class SignerService
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private string version = "1.0";
         public string getVersion()
         {

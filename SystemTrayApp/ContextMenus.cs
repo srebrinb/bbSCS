@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Html5WebSCSTrayApp.Properties;
 using System.Drawing;
 
-namespace SystemTrayApp
+namespace Html5WebSCSTrayApp
 {
 	/// <summary>
 	/// 
@@ -62,7 +62,9 @@ namespace SystemTrayApp
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		void InstallSSLCert_Click(object sender, EventArgs e)
 		{
-			Process.Start("http://localhost:53951/install", null);
+            Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
+            Program.exit();
+            Process.Start("http://localhost:53951/install", null);
 
         }
 

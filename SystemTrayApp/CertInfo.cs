@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Json;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace SystemTrayApp
+namespace Html5WebSCSTrayApp
 {
     [Flags]
     public enum Profiles

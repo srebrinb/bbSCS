@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace SystemTrayApp
+namespace Html5WebSCSTrayApp
 {
 	partial class AboutBox : Form
 	{

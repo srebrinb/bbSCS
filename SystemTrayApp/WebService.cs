@@ -14,10 +14,13 @@ using Newtonsoft.Json.Linq;
 using Html5WebSCSTrayApp;
 using Html5WebSCSTrayApp.Properties;
 
-namespace SystemTrayApp
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+namespace Html5WebSCSTrayApp
 {
     class WebService
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static Dictionary<string, string> MimeTypesForExtensions = new Dictionary<string, string>
         {
             { ".html", "text/html" },
@@ -42,7 +45,7 @@ namespace SystemTrayApp
         {
             HttpListenerRequest request = ctx.Request;
             //  HttpListenerResponse response=ctx.Response;
-            Console.WriteLine(request.HttpMethod + " " + request.RawUrl);
+            log.InfoFormat("request ssl {2} {0} {1}", request.HttpMethod, request.RawUrl, ctx.Request.IsSecureConnection);
 
             Options(ctx);
             dynamic payload;
@@ -57,17 +60,30 @@ namespace SystemTrayApp
                     if (!Html5WebSCSTrayApp.InstallSetup.IsAdministrator())
                     {
                         ctx.Response.ContentType = "text/html";
-                        strOut = "Installing<br/>Reset app";
-                        byte[] bufOut = Encoding.UTF8.GetBytes(strOut);
-                        ctx.Response.ContentLength64 = bufOut.Length;
-                        ctx.Response.OutputStream.Write(bufOut, 0, bufOut.Length);
+                        using (FileStream fsSource = new FileStream("htmls/installCert.html", FileMode.Open, FileAccess.Read))
+                        {
+                            buf = ReadFully(fsSource);
+                        }
+                       
+                        ctx.Response.ContentLength64 = buf.Length;
+                        ctx.Response.OutputStream.Write(buf, 0, buf.Length);
                         // ctx.Response.Close();
                         Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
                         Program.exit();
                         return false;
                     }
                 }
+                if (request.HttpMethod.ToUpper().Equals("OPTIONS")){
+                    return true;
 
+                }
+                if (segments[1].ToLower().StartsWith ("bytes"))
+                {
+                    buf = Encoding.UTF8.GetBytes("test ok");
+                    ctx.Response.ContentLength64 = buf.Length;
+                    ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+                    return true;
+                }
                 if ((request.HttpMethod.ToUpper().Equals("POST") || request.HttpMethod.ToUpper().Equals("GET")))
                 {
                     if (request.HttpMethod.ToUpper().Equals("POST"))
@@ -80,14 +96,17 @@ namespace SystemTrayApp
                                 documentContents = readStream.ReadToEnd();
                             }
                         }
+                        log.Debug(documentContents);
                         payload = JsonConvert.DeserializeObject(documentContents);
                     }
                     else
                     {
+                        log.Debug(request.RawUrl);
                         payload = new DynamicDictionary();
                         payload.selector = new DynamicDictionary();
                         foreach (var param in request.QueryString)
                         {
+                            
                             Console.WriteLine(param.ToString().ToLower());
                             payload.dictionary[param.ToString().ToLower()] = request.QueryString.Get(param.ToString());
                             if (param.ToString().ToLower() == "thumbprint")
@@ -178,6 +197,7 @@ namespace SystemTrayApp
             ctx.Response.AppendHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
             ctx.Response.AppendHeader("Access-Control-Allow-Origin", ctx.Request.Headers.Get("Origin"));
             ctx.Response.AppendHeader("Accept", "application/json, */*");
+            log.InfoFormat("Origin {0}", ctx.Request.Headers.Get("Origin"));
         }
     }
 }

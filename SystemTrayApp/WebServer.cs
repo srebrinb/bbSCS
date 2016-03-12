@@ -4,10 +4,11 @@ using System.Threading;
 using System.Linq;
 using System.Text;
 
-namespace SystemTrayApp
+namespace Html5WebSCSTrayApp
 {
     public class WebServer
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly HttpListener _listener = new HttpListener();
         private readonly Func<HttpListenerContext, bool> _responderMethod;
 
@@ -27,10 +28,15 @@ namespace SystemTrayApp
                 throw new ArgumentException("method");
 
             foreach (string s in prefixes)
+            {
                 _listener.Prefixes.Add(s);
-
+                log.Info(" listener Add (" + s + ")");
+            }
             _responderMethod = method;
+
             _listener.Start();
+
+
         }
 
         public WebServer(Func<HttpListenerContext, bool> method, params string[] prefixes)
@@ -42,6 +48,7 @@ namespace SystemTrayApp
             ThreadPool.QueueUserWorkItem((o) =>
             {
                 Console.WriteLine("Webserver running...");
+                log.Info("Webserver running...");
                 try
                 {
                     while (_listener.IsListening)
@@ -51,16 +58,18 @@ namespace SystemTrayApp
                             var ctx = c as HttpListenerContext;
                             try
                             {
-                                
-                                 _responderMethod(ctx);
- 
+
+                                _responderMethod(ctx);
+
                             }
-                            catch (Exception e) {
+                            catch (Exception e)
+                            {
                                 ctx.Response.StatusCode = 500;
                                 byte[] buf = Encoding.UTF8.GetBytes(e.Message);
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
-                                Console.WriteLine(e.Message+"\n"+e.StackTrace + "\n" + e.Source);
+
+                                log.Error(e.Message, e);
                             } // suppress any exceptions
                             finally
                             {

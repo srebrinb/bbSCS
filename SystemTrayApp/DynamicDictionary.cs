@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace SystemTrayApp
+namespace Html5WebSCSTrayApp
 {
     [DataContract]
     public class DynamicDictionary : DynamicObject

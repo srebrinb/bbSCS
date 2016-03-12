@@ -1,4 +1,4 @@
-﻿namespace SystemTrayApp
+﻿namespace Html5WebSCSTrayApp
 {
 	partial class AboutBox
 	{

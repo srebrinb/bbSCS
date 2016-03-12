@@ -10,6 +10,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Html5WebSCSTrayApp
 {
     class InstallSetup
@@ -56,7 +57,33 @@ namespace Html5WebSCSTrayApp
             }
             
         }
+        public static void setACLs(string[] address)
+        {
+            foreach (string addres in address)
+                setACL(addres);
+        }
+        public static void setACL(string address)
+        {
+            string args = String.Format("http add urlacl {0} user=\\Everyone", address);
 
+            ProcessStartInfo proc = new ProcessStartInfo();
+            proc.UseShellExecute = true;
+            proc.WorkingDirectory = Environment.CurrentDirectory;
+            proc.FileName = "netsh";
+            proc.Arguments = args;
+            proc.Verb = "runas";
+
+            try
+            {
+                Process.Start(proc);
+            }
+            catch
+            {
+                // The user refused the elevation.
+                // Do nothing and return directly ...
+                return;
+            }
+        }
         public static void runAs(string cmd)
         {
             // Elevate the process if it is not run as administrator.

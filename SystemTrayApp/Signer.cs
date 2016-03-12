@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace SystemTrayApp
+namespace Html5WebSCSTrayApp
 {
     class Signer
     {
