@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Html5WebSCSTrayApp;
 using Html5WebSCSTrayApp.Properties;
+using System.Text.RegularExpressions;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 namespace Html5WebSCSTrayApp
@@ -144,6 +145,7 @@ namespace Html5WebSCSTrayApp
                                 documentContents = readStream.ReadToEnd();
                             }
                         }
+
                         log.Debug(documentContents);
                         payload = JsonConvert.DeserializeObject(documentContents);
                     }
@@ -185,6 +187,9 @@ namespace Html5WebSCSTrayApp
                             break;
                         case ("version"):
                             strOut = sSignerService.Version();
+                            break;
+                        case ("protect"):
+                            strOut = sSignerService.ProtectPin(payload);
                             break;
                             //default:
                             //    strOut = sSignerService.unkonwAction(action);

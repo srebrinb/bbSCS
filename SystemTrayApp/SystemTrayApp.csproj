@@ -125,6 +125,7 @@
     </Compile>
     <Compile Include="CertInfo.cs" />
     <Compile Include="ContextMenus.cs" />
+    <Compile Include="CryptData.cs" />
     <Compile Include="DynamicDictionary.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="InstallSetup.cs" />

@@ -174,7 +174,7 @@ namespace Html5WebSCSTrayApp
                 catch { };
                 if (selectedCert == null || forceSelectCert || newSession) selectCert(payload);
                 Signer si = new Signer(selectedCert.certificate);
-                si.forceClearPINCache = newSession| forcePINRquest;
+                si.forceClearPINCache = newSession | forcePINRquest;
                 try
                 {
                     if (payload.hashAlgorithm != null) si.HashAlgorithm = payload.hashAlgorithm;
@@ -185,6 +185,13 @@ namespace Html5WebSCSTrayApp
                     if (payload.contentType != null) si.contentType = payload.contentType;
                 }
                 catch { }
+                try
+                {
+                    if (payload.protectedPin != null) si.setProtectedPin((string)payload.protectedPin);
+                }
+                catch (Exception e){
+                    log.Error("setPin", e);
+                }
                 
                 objResp.Add("signature", si.sign(content));
                 var arrChain = new JArray(selectedCert.getChain());
@@ -262,6 +269,25 @@ namespace Html5WebSCSTrayApp
 
                 return certinfo.getCertInfo(cert).getJsonStr();
 
+            }
+            catch (Exception e)
+            {
+                selectedCert = null;
+                objResp.Add("status", "failed");
+                objResp.Add("reasonCode", 500);
+                objResp.Add("reasonText", e.Message);
+                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
+            }
+            return objResp.ToString();
+        }
+        public string ProtectPin(dynamic payload)
+        {
+            var objResp = new JObject();
+            objResp.Add("version", version);
+            try
+            {
+                string pin = payload.pin;
+                objResp.Add( "protectedPin",CryptData.EncryptUserString(pin));
             }
             catch (Exception e)
             {

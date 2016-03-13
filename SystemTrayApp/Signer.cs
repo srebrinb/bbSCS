@@ -48,6 +48,11 @@ namespace Html5WebSCSTrayApp
         {
             this.cert = cert;
         }
+        public void setProtectedPin(string protectPW)
+        {
+
+            setPin( CryptData.DecryptUserString(protectPW).ToCharArray());
+        }
         public void setPin(SecureString pw)
         {
             securePwd = pw;
