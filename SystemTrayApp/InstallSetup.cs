@@ -47,8 +47,7 @@ namespace Html5WebSCSTrayApp
         }
         public static bool checkCert(string address)
         {
-            string args = String.Format("http show sslcert hostnameport={0}"
-                              , address,  getGUID());
+            string args = String.Format("http show sslcert hostnameport={0}", address);
             string res= execNetsh(args);
             return (res.IndexOf(getGUID()) > 0);
         }

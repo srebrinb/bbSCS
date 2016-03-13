@@ -172,7 +172,7 @@ namespace Html5WebSCSTrayApp
                     }
                 }
                 catch { };
-                if (selectedCert == null || forceSelectCert) selectCert(payload);
+                if (selectedCert == null || forceSelectCert || newSession) selectCert(payload);
                 Signer si = new Signer(selectedCert.certificate);
                 si.forceClearPINCache = newSession| forcePINRquest;
                 try
