@@ -118,7 +118,6 @@ namespace Html5WebSCSTrayApp
             CspKeyContainerInfo cspKeyContainerInfo = csp.CspKeyContainerInfo;
             CspParameters cspParametersTmp = new CspParameters();
             cspParametersTmp.KeyContainerName = cspKeyContainerInfo.KeyContainerName;
-            //cspParametersTmp.KeyNumber = KeyNumber.Signature;
             cspParametersTmp.ProviderType = cspKeyContainerInfo.ProviderType;
             cspParametersTmp.ProviderName = cspKeyContainerInfo.ProviderName;
             if (securePwd!=null) {

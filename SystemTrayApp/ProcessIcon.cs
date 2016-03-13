@@ -18,7 +18,6 @@ namespace Html5WebSCSTrayApp
         /// </summary>
         NotifyIcon ni;
         WebService wsHTTPRequestHandler;
-        Process browserStartProc = null;
         WebServer ws;
 
         /// <summary>
