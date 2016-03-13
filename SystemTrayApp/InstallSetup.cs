@@ -17,13 +17,13 @@ namespace Html5WebSCSTrayApp
     class InstallSetup
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        private static char[]  CRLN = {'\r','\n' };
         public static string installCets()
         {
             string thump = "";
             X509Store store = new X509Store("Root", StoreLocation.LocalMachine);
             store.Open(OpenFlags.ReadWrite);
-            X509Certificate2 rootCert = new X509Certificate2(Resources.vSrebrinCA);
+            X509Certificate2 rootCert = new X509Certificate2(Resources.vParafCA);
             store.Add(rootCert);
             store.Close();
             log.InfoFormat("Install certs CA {0} thmp:{1}", rootCert.Subject, rootCert.Thumbprint);
@@ -34,21 +34,25 @@ namespace Html5WebSCSTrayApp
             mystore.Add(Cert);
             mystore.Close();
             thump= Cert.Thumbprint;
-            
             log.InfoFormat("Install certs Cert {0} thmp:{1}", Cert.Subject,thump);
             Cert.Reset();
             return thump;
         }
         public static void setCert(string thump,string address)
         {
-            string args=String.Format( "http add sslcert ipport={0} certhash={1} appid={{{2}}}"
-                           ,address,thump.ToLower(),getGUID());
-
-
+            
+            string args=String.Format( "http add sslcert hostnameport={0} certstorename=MY certhash={1} appid={{{2}}}"
+                              ,address,thump.ToLower(),getGUID());
             execNetsh(args);
-
         }
-        public static void execNetsh(string cmdArgs)
+        public static bool checkCert(string address)
+        {
+            string args = String.Format("http show sslcert hostnameport={0}"
+                              , address,  getGUID());
+            string res= execNetsh(args);
+            return (res.IndexOf(getGUID()) > 0);
+        }
+        public static string execNetsh(string cmdArgs)
         {
             log.InfoFormat("netsh {0}", cmdArgs);
             ProcessStartInfo proc = new ProcessStartInfo();
@@ -73,14 +77,14 @@ namespace Html5WebSCSTrayApp
                 output = p.StandardOutput.ReadToEnd();
                 error = p.StandardError.ReadToEnd();
                 p.WaitForExit();
-                log.Debug (output.Trim('\r').Trim('\n'));
-
+                log.Debug (output.Trim(CRLN));
+                return output.Trim(CRLN);
             }
             catch (Exception ex)
             {
                 log.Error(cmdArgs,ex);
-                log.Debug(error.Trim('\r').Trim('\n'));
-                return;
+                log.Debug(error.Trim(CRLN));
+                return error.Trim(CRLN);
             }
         }
         public static void setACLs(string[] address)

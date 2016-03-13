@@ -13,7 +13,7 @@ namespace Html5WebSCSTrayApp
     class SignerService
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        public bool newSession = true;
         private string version = "1.0";
         public string getVersion()
         {
@@ -145,6 +145,7 @@ namespace Html5WebSCSTrayApp
             {
                 string content = payload.content;
                 bool forceSelectCert = false;
+                bool forcePINRquest = false;
                 try
                 {
                     if (payload.forceSelectCert != null)
@@ -158,8 +159,22 @@ namespace Html5WebSCSTrayApp
                     }
                 }
                 catch { };
+                try
+                {
+                    if (payload.forcePINRquest != null)
+                    {
+                        string strforcePINRquest = payload.forcePINRquest;
+                        strforcePINRquest = strforcePINRquest.ToLower();
+                        if (strforcePINRquest == "true" || strforcePINRquest == "yes")
+                        {
+                            forcePINRquest = true;
+                        }
+                    }
+                }
+                catch { };
                 if (selectedCert == null || forceSelectCert) selectCert(payload);
                 Signer si = new Signer(selectedCert.certificate);
+                si.forceClearPINCache = newSession| forcePINRquest;
                 try
                 {
                     if (payload.hashAlgorithm != null) si.HashAlgorithm = payload.hashAlgorithm;

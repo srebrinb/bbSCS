@@ -13,7 +13,7 @@ namespace Html5WebSCSTrayApp
         public string contentType = "digest";
         SecureString securePwd = null;
         private HashAlgorithm hasher= new SHA1Managed();
-
+        public bool forceClearPINCache = true;
         public string HashAlgorithm
         {
             get
@@ -126,9 +126,9 @@ namespace Html5WebSCSTrayApp
             }
             cspParametersTmp.Flags = CspProviderFlags.UseUserProtectedKey;
             csp.Clear();
-                RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
+            RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
             //RSACryptoServiceProvider rsaSignProvider = (RSACryptoServiceProvider)cert.PrivateKey;
-            
+            if (forceClearPINCache && securePwd == null) ClearPINCache2(rsaSignProvider);
             byte[] sig = rsaSignProvider.SignHash(hashContent, CryptoConfig.MapNameToOID(HashAlgorithm));
             rsaSignProvider.Clear();
             rsaSignProvider.Dispose();

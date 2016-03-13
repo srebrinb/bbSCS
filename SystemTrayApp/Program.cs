@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Windows.Forms;
@@ -29,7 +30,20 @@ namespace Html5WebSCSTrayApp
         {
             Properties.Settings settings = new Properties.Settings();
             prefix[0] = settings.httpUri;
-            prefix[1] = settings.httpsUri;
+           prefix[1] = settings.httpsUri;
+            /*
+            List<string> webUrladdress = new List<string>();
+            string[] confsUrls = (settings.httpUri + "," + settings.httpsUri).Split(',');
+            foreach (string url in confsUrls)
+            {
+                webUrladdress.Add(url);
+                Uri https = new Uri(url);
+                IPAddress[] iPAddress = Dns.GetHostEntry(https.Host).AddressList;
+                string ip = iPAddress[0].ToString();
+                webUrladdress.Add(https.Scheme+"://"+ip+":"+ https.Port+"/");
+            }
+            prefix = webUrladdress.ToArray();
+    */        
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
@@ -40,8 +54,8 @@ namespace Html5WebSCSTrayApp
                 string tump = Html5WebSCSTrayApp.InstallSetup.installCets();
                 Html5WebSCSTrayApp.InstallSetup.setACLs(prefix);
                 Uri https = new Uri(settings.httpsUri);
-                string ip = Dns.GetHostEntry(https.Host).AddressList[0].ToString();
-                Html5WebSCSTrayApp.InstallSetup.setCert(tump, ip+":"+ https.Port);
+       //         string ip = Dns.GetHostEntry(https.Host).AddressList[0].ToString();
+                Html5WebSCSTrayApp.InstallSetup.setCert(tump, https.Host+ ":"+ https.Port);
                 Process.Start(settings.httpsUri, null);
             }
             // Show the system tray icon.					

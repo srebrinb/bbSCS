@@ -178,7 +178,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="Resources\localhost.key" />
-    <None Include="Resources\vSrebrinCA.cer" />
+    <None Include="Resources\vParafCA.cer" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="htmls\index.html">

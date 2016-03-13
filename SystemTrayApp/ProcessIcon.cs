@@ -53,10 +53,17 @@ namespace Html5WebSCSTrayApp
             }
             catch (Exception e)
             {
-                log.Error(e.Message);
-                MessageBox.Show("Install & Setings Web Access SSLCert");
-                Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
-                
+                log.Error(e.Message, e);
+                if (e.Message.Equals("Access is denied"))
+                {
+                    MessageBox.Show("Install & Setings Web Access SSLCert");
+                    Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
+                }
+                else
+                {
+                    MessageBox.Show(e.Message+"\n Exit", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    
+                }
                 return false;
             }
             return true;

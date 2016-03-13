@@ -20,7 +20,7 @@ namespace Html5WebSCSTrayApp
     class WebService
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        private static string sessionCookieName = "PSess";
         private static Dictionary<string, string> MimeTypesForExtensions = new Dictionary<string, string>
         {
             { ".html", "text/html" },
@@ -49,35 +49,55 @@ namespace Html5WebSCSTrayApp
                 return ms.ToArray();
             }
         }
+        private static string getOriginId(HttpListenerRequest request)
+        {
+            string Origin = request.Headers.Get("Origin");
+            string UserAgent = request.UserAgent;
+            string Machine = Program.executablePath;
+            SHA1 sha1 = SHA1.Create();
+            byte[] id = sha1.ComputeHash(Encoding.UTF8.GetBytes(Origin+ UserAgent+ Machine));
+            return System.Convert.ToBase64String(id);
+        }
         public bool SendResponse(HttpListenerContext ctx)
         {
             HttpListenerRequest request = ctx.Request;
             //  HttpListenerResponse response=ctx.Response;
             log.InfoFormat("request ssl {2} {0} {1}", request.HttpMethod, request.RawUrl, ctx.Request.IsSecureConnection);
 
+            bool newSession = true;
+
+
             
-            
-            var cookies = ctx.Request.Cookies;
+            var cookies = request.Cookies;
             foreach (Cookie cookie in cookies)
             {
                 Console.WriteLine(cookie.Name + ":" + cookie.Value);
-                if (cookie.Name.Equals("ssession")) sessionid = cookie.Value;
+                if (cookie.Name.Equals(sessionCookieName)) sessionid = cookie.Value;
             }
-            if (sessionid=="")
+            string originId=getOriginId(request);
+            string[] tm = sessionid.Split('-');
+            if (tm.Length == 2 && tm[1]== originId)
             {
-                sessionid = RandomString(32);
-                Cookie sessCookie = new Cookie("ssession", sessionid);
+                newSession = false;
+                log.DebugFormat("old session {0}", sessionid);
+            }
+            if (sessionid=="" || newSession)
+            {
+                sessionid = RandomString(32) + "-" + originId;
+                Cookie sessCookie = new Cookie(sessionCookieName, sessionid);
                 sessCookie.HttpOnly = true;
                 sessCookie.Path = "/";
+                sessCookie.Expires = DateTime.Now.AddMinutes(30);
                 sessCookie.Domain = request.UserHostName;
                 if (ctx.Request.IsSecureConnection) sessCookie.Secure = true;
                 ctx.Response.Cookies.Add(sessCookie);
+                log.DebugFormat("start new session {0}", sessionid);
             }
+            sSignerService.newSession = newSession;
             Options(ctx);
             if (request.HttpMethod.ToUpper().Equals("OPTIONS"))
             {
                 return true;
-
             }
             dynamic payload;
             string strOut = "";

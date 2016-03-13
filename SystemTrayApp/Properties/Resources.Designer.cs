@@ -133,9 +133,9 @@ namespace Html5WebSCSTrayApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] vSrebrinCA {
+        internal static byte[] vParafCA {
             get {
-                object obj = ResourceManager.GetObject("vSrebrinCA", resourceCulture);
+                object obj = ResourceManager.GetObject("vParafCA", resourceCulture);
                 return ((byte[])(obj));
             }
         }
