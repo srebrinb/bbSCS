@@ -67,6 +67,9 @@ namespace Html5WebSCSTrayApp
                 name = value;
             }
         }
+
+        public Func<string> Demo { get; set; }
+
         public override string ToString()
         {
             string value = "Method : " + Name;

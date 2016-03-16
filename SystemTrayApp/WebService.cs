@@ -177,6 +177,7 @@ namespace Html5WebSCSTrayApp
                             strOut = sSignerService.certs(payload);
                             break;
                         case ("selectcert"):
+                        case ("cert"):
                             strOut = sSignerService.selectCert(payload);
                             break;
                         case ("validate"):
@@ -191,9 +192,10 @@ namespace Html5WebSCSTrayApp
                         case ("protect"):
                             strOut = sSignerService.ProtectPin(payload);
                             break;
-                            //default:
-                            //    strOut = sSignerService.unkonwAction(action);
-                            //    break;
+                        
+                        case ("help"):
+                                strOut = sSignerService.unkonwAction(action);
+                                break;
                     }
 
                 }

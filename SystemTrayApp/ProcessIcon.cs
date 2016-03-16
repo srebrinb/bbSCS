@@ -36,6 +36,7 @@ namespace Html5WebSCSTrayApp
         /// </summary>
         public bool Display()
         {
+
             // Put the icon in the system tray and allow it react to mouse clicks.			
             ni.MouseClick += new MouseEventHandler(ni_MouseClick);
             ni.Icon = Resources.html5Paraf;

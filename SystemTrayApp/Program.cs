@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace Html5WebSCSTrayApp
@@ -12,9 +13,9 @@ namespace Html5WebSCSTrayApp
     static class Program
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        public static string productName= Application.ProductName;
+        public static string productName = Application.ProductName;
         public static string executablePath = Application.ExecutablePath;
-        
+
 
         public static string[] prefix = { "http://127.0.0.1:53951/", "https://127.0.0.1:53952/" };
         public static Properties.Settings settings = new Properties.Settings();
@@ -28,9 +29,10 @@ namespace Html5WebSCSTrayApp
         [STAThread]
         static void Main()
         {
+            log.InfoFormat("Starting {0} ver.{1}", Assembly.GetExecutingAssembly().GetName().Name, Assembly.GetExecutingAssembly().GetName().Version.ToString());
             Properties.Settings settings = new Properties.Settings();
             prefix[0] = settings.httpUri;
-           prefix[1] = settings.httpsUri;
+            prefix[1] = settings.httpsUri;
             /*
             List<string> webUrladdress = new List<string>();
             string[] confsUrls = (settings.httpUri + "," + settings.httpsUri).Split(',');
@@ -43,19 +45,19 @@ namespace Html5WebSCSTrayApp
                 webUrladdress.Add(https.Scheme+"://"+ip+":"+ https.Port+"/");
             }
             prefix = webUrladdress.ToArray();
-    */        
+    */
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
-            
+
 
             if (Html5WebSCSTrayApp.InstallSetup.IsAdministrator())
             {
                 string tump = Html5WebSCSTrayApp.InstallSetup.installCets();
                 Html5WebSCSTrayApp.InstallSetup.setACLs(prefix);
                 Uri https = new Uri(settings.httpsUri);
-       //         string ip = Dns.GetHostEntry(https.Host).AddressList[0].ToString();
-                Html5WebSCSTrayApp.InstallSetup.setCert(tump, https.Host+ ":"+ https.Port);
+                //         string ip = Dns.GetHostEntry(https.Host).AddressList[0].ToString();
+                Html5WebSCSTrayApp.InstallSetup.setCert(tump, https.Host + ":" + https.Port);
                 Process.Start(settings.httpsUri, null);
             }
             // Show the system tray icon.					
@@ -75,7 +77,7 @@ namespace Html5WebSCSTrayApp
                 catch (Exception e)
                 {
                     log.Error(e.Message, e);
-                    
+
                 }
 
 

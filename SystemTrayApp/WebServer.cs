@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace Html5WebSCSTrayApp
 {
@@ -47,7 +48,7 @@ namespace Html5WebSCSTrayApp
         {
             ThreadPool.QueueUserWorkItem((o) =>
             {
-                Console.WriteLine("Webserver running...");
+
                 log.Info("Webserver running...");
                 try
                 {
@@ -64,12 +65,23 @@ namespace Html5WebSCSTrayApp
                             }
                             catch (Exception e)
                             {
-                                ctx.Response.StatusCode = 500;
+                                //if (ctx.Response.Headers.Get("Accept").IndexOf("json")>0)
+                                /*ctx.Response.StatusCode = 500;
                                 byte[] buf = Encoding.UTF8.GetBytes(e.Message);
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
-
+    */
+                                var objResp = new JObject();
+                                objResp.Add("status", "failed");
+                                objResp.Add("reasonCode", 500);
+                                objResp.Add("reasonText", e.Message+"\n"+e.StackTrace);
+                                
                                 log.Error(e.Message, e);
+                                ctx.Response.StatusCode = 200;
+                                ctx.Response.ContentType = "application/json";
+                                byte[] buf = Encoding.UTF8.GetBytes(objResp.ToString());
+                                ctx.Response.ContentLength64 = buf.Length;
+                                ctx.Response.OutputStream.Write(buf, 0, buf.Length);
                             } // suppress any exceptions
                             finally
                             {

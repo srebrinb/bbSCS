@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Html5WebSCSTrayApp;
+using System.Reflection;
 
 namespace Html5WebSCSTrayApp
 {
@@ -20,6 +21,9 @@ namespace Html5WebSCSTrayApp
             return version;
         }
         CertInfo selectedCert = null;
+
+        public dynamic profiles = "base";
+
         private X509Certificate2Collection lisyMyCerts(dynamic payload)
         {
             X509Store store = new X509Store("MY", StoreLocation.CurrentUser);
@@ -75,6 +79,7 @@ namespace Html5WebSCSTrayApp
             store.Close();
             return fcollection;
         }
+        [RestAction("selectcert", "Select certificate for signer")]
         public string selectCert(dynamic payload)
         {
             X509Certificate2Collection fcollection = lisyMyCerts(payload);
@@ -96,9 +101,17 @@ namespace Html5WebSCSTrayApp
             {
                 throw new Exception("The Certificate Select was cancelled by the user");
             }
-            CertInfo certInfo;
+            try
+            {
+                if (payload.profile != null) profiles = payload.profile;
+            }
+            catch { }
+            Profiles profile = CertInfo.getProfile(profiles);
+            CertInfo ci = new CertInfo(profile);
+            CertInfo certInfo = new CertInfo();
+
             string json = "";
-            CertInfo ci = new CertInfo();
+
             foreach (X509Certificate2 x509 in fcollection)
             {
                 certInfo = ci.getCertInfo(x509);
@@ -106,8 +119,10 @@ namespace Html5WebSCSTrayApp
                 selectedCert = certInfo;
                 //x509.Reset();
             }
+            //TODO return status 200
             return json;
         }
+        [RestAction("certs", "Get list certs")]
         public string certs(dynamic payload)
         {
             var objResp = new JObject();
@@ -117,7 +132,13 @@ namespace Html5WebSCSTrayApp
 
             var arrCerts = new JArray();
             int count = 0;
-            CertInfo ci = new CertInfo();
+            try
+            {
+                if (payload.profile != null) profiles = payload.profile;
+            }
+            catch { }
+            Profiles profile = CertInfo.getProfile(profiles);
+            CertInfo ci = new CertInfo(profile);
             foreach (X509Certificate2 x509 in fcollection)
             {
                 certInfo = ci.getCertInfo(x509);
@@ -126,6 +147,8 @@ namespace Html5WebSCSTrayApp
             }
             objResp.Add("count", count);
             objResp.Add("certs", arrCerts);
+            objResp.Add("status", "ok");
+            objResp.Add("reasonCode", 200);
             return objResp.ToString();
         }
 
@@ -136,14 +159,46 @@ namespace Html5WebSCSTrayApp
                              .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
                              .ToArray();
         }
-
+        [RestAction("sign", "Signnig contents")]
         public string sign(dynamic payload)
         {
+            log4net.NDC.Push("Sign");
             var objResp = new JObject();
             objResp.Add("version", version);
             try
             {
-                string content = payload.content;
+                bool multisign = false;
+                string content = "";
+                List<string> contents = new List<string>();
+                log4net.NDC.Push("Get Content");
+
+                try
+                {
+                    if (payload.content != null)
+                    {
+                        multisign = false;
+                        content = payload.content;
+                    }
+                    else if (payload.contents != null)
+                    {
+                        multisign = true;
+                        JArray arrContents = payload.contents;
+                        foreach (string tmpCont in arrContents)
+                        {
+                            contents.Add(tmpCont);
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Not exist 'content' or 'contents'");
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Get content to sign."+ e.Message);
+                }
+
+
                 bool forceSelectCert = false;
                 bool forcePINRquest = false;
                 try
@@ -173,6 +228,8 @@ namespace Html5WebSCSTrayApp
                 }
                 catch { };
                 if (selectedCert == null || forceSelectCert || newSession) selectCert(payload);
+                log4net.NDC.Pop();
+                log4net.NDC.Push("init Signer");
                 Signer si = new Signer(selectedCert.certificate);
                 si.forceClearPINCache = newSession | forcePINRquest;
                 try
@@ -189,11 +246,25 @@ namespace Html5WebSCSTrayApp
                 {
                     if (payload.protectedPin != null) si.setProtectedPin((string)payload.protectedPin);
                 }
-                catch (Exception e){
+                catch (Exception e)
+                {
                     log.Error("setPin", e);
                 }
-                
-                objResp.Add("signature", si.sign(content));
+
+                if (multisign)
+                {
+                    log4net.NDC.Push("multisign");
+                    JArray signatures = new JArray();
+                    foreach (string tmpCont in contents)
+                    {
+                        signatures.Add(si.sign(tmpCont));
+                    }
+                    objResp.Add("signatures", signatures);
+                }
+                else {
+                    log4net.NDC.Push("sign");
+                    objResp.Add("signature", si.sign(content));
+                }
                 var arrChain = new JArray(selectedCert.getChain());
 
                 objResp.Add("status", "ok");
@@ -209,10 +280,11 @@ namespace Html5WebSCSTrayApp
                 objResp.Add("status", "failed");
                 objResp.Add("reasonCode", 500);
                 objResp.Add("reasonText", e.Message);
-                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
+                log.Error("sign error", e);
             }
             return objResp.ToString();
         }
+        [RestAction("validate", "Validate signature", Methods = "POST")]
         public string Validate(dynamic payload)
         {
             var objResp = new JObject();
@@ -237,6 +309,8 @@ namespace Html5WebSCSTrayApp
                 }
                 catch { }
                 bool res = si.verify(content, signature);
+                objResp.Add("status", "ok");
+                objResp.Add("reasonCode", 200);
                 objResp.Add("result", res);
             }
             catch (Exception e)
@@ -250,6 +324,7 @@ namespace Html5WebSCSTrayApp
             return objResp.ToString();
 
         }
+        [RestAction("certinfo")]
         public string certinfo(dynamic payload)
         {
             var objResp = new JObject();
@@ -280,6 +355,11 @@ namespace Html5WebSCSTrayApp
             }
             return objResp.ToString();
         }
+        public string ProtectPinDemo()
+        {
+            return "{res:true}";
+        }
+        [RestAction("ProtectPin", Protect = true)]
         public string ProtectPin(dynamic payload)
         {
             var objResp = new JObject();
@@ -287,7 +367,7 @@ namespace Html5WebSCSTrayApp
             try
             {
                 string pin = payload.pin;
-                objResp.Add( "protectedPin",CryptData.EncryptUserString(pin));
+                objResp.Add("protectedPin", CryptData.EncryptUserString(pin));
             }
             catch (Exception e)
             {
@@ -299,6 +379,7 @@ namespace Html5WebSCSTrayApp
             }
             return objResp.ToString();
         }
+        [RestAction("version")]
         public string Version()
         {
             string resp = "{\"version\": \"1.0\",\"httpMethods\": \"GET, POST\",\"contentTypes\": \"data, digest\",\"signatureTypes\": \"signature\",\"selectorAvailable\": true,\"hashAlgorithms\": \"SHA1, SHA256, SHA384, SHA512\"}";
@@ -306,6 +387,7 @@ namespace Html5WebSCSTrayApp
         }
         public string unkonwAction(string action)
         {
+            /*
             var objResp = new JObject();
             objResp.Add("version", "1.0");
             objResp.Add("status", "failed");
@@ -318,6 +400,30 @@ namespace Html5WebSCSTrayApp
             objRespActions.Add("Version", "The version check SCS");
             objRespActions.Add("validate", "Validate signature");
             objResp.Add("Accept-Action", objRespActions);
+            return objResp.ToString();
+            */
+
+            var objResp = new JObject();
+            objResp.Add("version", "1.0");
+            objResp.Add("status", "failed");
+            objResp.Add("reasonCode", 404);
+            objResp.Add("reasonText", "Actions " + action + " not exist");
+            JArray jacction = new JArray();
+            foreach (MethodInfo method in (typeof(SignerService)).GetMethods())
+            {
+                if (RestActionAttribute.IsRestActionAttribute(method))
+                {
+
+                    RestActionAttribute restAction = RestActionAttribute.getRestActionAttribute(method);
+                    var objRespActions = new JObject();
+                    objRespActions.Add("Name", restAction.Name);
+                    objRespActions.Add("Desc", restAction.Desc);
+                    objRespActions.Add("Methods", restAction.Methods);
+                    if (restAction.Protect) objRespActions.Add("Protect", "Only SSL");
+                    jacction.Add(objRespActions);
+                }
+            }
+            objResp.Add("Accept-Actions", jacction);
             return objResp.ToString();
         }
     }
