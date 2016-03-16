@@ -270,7 +270,7 @@ namespace Html5WebSCSTrayApp
                 objResp.Add("status", "ok");
                 objResp.Add("reasonCode", 200);
                 objResp.Add("reasonText", "Signature generated");
-
+                //TODO get from si.signatureAlgorithm convert to JAVA name
                 objResp.Add("signatureAlgorithm", si.HashAlgorithm + "withRSA");
                 objResp.Add("chain", arrChain);
             }

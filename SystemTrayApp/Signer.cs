@@ -14,6 +14,8 @@ namespace Html5WebSCSTrayApp
         SecureString securePwd = null;
         private HashAlgorithm hasher = new SHA1Managed();
         public bool forceClearPINCache = true;
+        public string signatureAlgorithm;
+
         public string HashAlgorithm
         {
             get
@@ -140,6 +142,7 @@ namespace Html5WebSCSTrayApp
             //RSACryptoServiceProvider rsaSignProvider = (RSACryptoServiceProvider)cert.PrivateKey;
             if (forceClearPINCache && securePwd == null) ClearPINCache2(rsaSignProvider);
             byte[] sig = rsaSignProvider.SignHash(hashContent, CryptoConfig.MapNameToOID(HashAlgorithm));
+            signatureAlgorithm=rsaSignProvider.SignatureAlgorithm;
             rsaSignProvider.Clear();
             rsaSignProvider.Dispose();
             Properties.Settings setting = new Properties.Settings();
