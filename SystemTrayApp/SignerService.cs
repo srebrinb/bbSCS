@@ -85,12 +85,14 @@ namespace Html5WebSCSTrayApp
             X509Certificate2Collection fcollection = lisyMyCerts(payload);
             if (fcollection.Count == 0)
             {
-                var objResp = new JObject();
-                objResp.Add("version", version);
-                objResp.Add("status", "failed");
-                objResp.Add("reasonCode", 404);
-                objResp.Add("reasonText", "Cert not found");
-                return objResp.ToString();
+                /* var objResp = new JObject();
+                 objResp.Add("version", version);
+                 objResp.Add("status", "failed");
+                 objResp.Add("reasonCode", 404);
+                 objResp.Add("reasonText", "Cert not found");
+                 return objResp.ToString();
+                 */
+                throw new Exception404("Cert not found");
             }
             if (fcollection.Count > 1)
             {
@@ -99,7 +101,7 @@ namespace Html5WebSCSTrayApp
             }
             if (fcollection.Count == 0)
             {
-                throw new Exception("The Certificate Select was cancelled by the user");
+                throw new Exception404("The Certificate Select was cancelled by the user");
             }
             try
             {
@@ -111,16 +113,22 @@ namespace Html5WebSCSTrayApp
             CertInfo certInfo = new CertInfo();
 
             string json = "";
-
+            var objResp = new JObject();
             foreach (X509Certificate2 x509 in fcollection)
             {
                 certInfo = ci.getCertInfo(x509);
-                json = certInfo.getJsonStr();
+             //   json = certInfo.getJsonStr();
                 selectedCert = certInfo;
                 //x509.Reset();
+                objResp =  JObject.FromObject (certInfo);
+                objResp.Add("version", version);
+                objResp.Add("status", "ok");
+                objResp.Add("reasonCode", 200);
             }
             //TODO return status 200
-            return json;
+            
+            return objResp.ToString();
+            
         }
         [RestAction("certs", "Get list certs")]
         public string certs(dynamic payload)
@@ -190,12 +198,12 @@ namespace Html5WebSCSTrayApp
                     }
                     else
                     {
-                        throw new Exception("Not exist 'content' or 'contents'");
+                        throw new Exception400("Not exist 'content' or 'contents'");
                     }
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Get content to sign."+ e.Message);
+                    throw new Exception400("Get content to sign.",e);
                 }
 
 
@@ -249,6 +257,7 @@ namespace Html5WebSCSTrayApp
                 catch (Exception e)
                 {
                     log.Error("setPin", e);
+                    throw new Exception400("wrong pin",e);
                 }
 
                 if (multisign)
@@ -277,10 +286,13 @@ namespace Html5WebSCSTrayApp
             catch (Exception e)
             {
                 selectedCert = null;
-                objResp.Add("status", "failed");
+                throw new Exception500(e.Message, e);
+                /*objResp.Add("status", "failed");
                 objResp.Add("reasonCode", 500);
                 objResp.Add("reasonText", e.Message);
                 log.Error("sign error", e);
+                */
+               
             }
             return objResp.ToString();
         }
@@ -309,17 +321,14 @@ namespace Html5WebSCSTrayApp
                 }
                 catch { }
                 bool res = si.verify(content, signature);
-                objResp.Add("status", "ok");
+                objResp.Add("status",(res? "ok":"failed"));
+                
                 objResp.Add("reasonCode", 200);
                 objResp.Add("result", res);
             }
             catch (Exception e)
             {
-                selectedCert = null;
-                objResp.Add("status", "failed");
-                objResp.Add("reasonCode", 500);
-                objResp.Add("reasonText", e.Message);
-                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
+                throw new Exception500(e.Message + "\n" + e.StackTrace, e);
             }
             return objResp.ToString();
 
@@ -333,7 +342,13 @@ namespace Html5WebSCSTrayApp
             {
                 string cert = "";
                 string profiles = "base";
-                if (payload.certX509 != null) cert = payload.certX509;
+                try
+                {
+                    if (payload.certX509 != null) cert = payload.certX509;
+                }
+                catch (Exception e) {
+                    throw new Exception400(e.Message, e);
+                }
                 try
                 {
                     if (payload.profile != null) profiles = payload.profile;
@@ -347,13 +362,9 @@ namespace Html5WebSCSTrayApp
             }
             catch (Exception e)
             {
-                selectedCert = null;
-                objResp.Add("status", "failed");
-                objResp.Add("reasonCode", 500);
-                objResp.Add("reasonText", e.Message);
-                Console.WriteLine(e.Message + "\n" + e.StackTrace + "\n" + e.Source);
+                throw new Exception500(e.Message, e);
             }
-            return objResp.ToString();
+            
         }
         public string ProtectPinDemo()
         {
@@ -371,7 +382,6 @@ namespace Html5WebSCSTrayApp
             }
             catch (Exception e)
             {
-                selectedCert = null;
                 objResp.Add("status", "failed");
                 objResp.Add("reasonCode", 500);
                 objResp.Add("reasonText", e.Message);

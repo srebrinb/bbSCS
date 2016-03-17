@@ -49,6 +49,7 @@ namespace Html5WebSCSTrayApp
             try
             {
                 ws = new WebServer(wsHTTPRequestHandler.SendResponse, Program.prefix);
+                ws.TrayNotifyIcon = ni;
                 ws.Run();
             }
             catch (Exception e)
@@ -104,6 +105,7 @@ namespace Html5WebSCSTrayApp
         }
         void OnDestroy()
         {
+            ni.Dispose();
             ws.Stop();
             Program.exit();
         }

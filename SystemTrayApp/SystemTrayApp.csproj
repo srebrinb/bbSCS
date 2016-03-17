@@ -128,8 +128,12 @@
     <Compile Include="ContextMenus.cs" />
     <Compile Include="CryptData.cs" />
     <Compile Include="DynamicDictionary.cs" />
+    <Compile Include="Exception400.cs" />
+    <Compile Include="Exception404.cs" />
+    <Compile Include="Exception500.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="InstallSetup.cs" />
+    <Compile Include="MyException.cs" />
     <Compile Include="ProcessIcon.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

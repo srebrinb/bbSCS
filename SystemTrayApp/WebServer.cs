@@ -4,12 +4,14 @@ using System.Threading;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using System.Windows.Forms;
 
 namespace Html5WebSCSTrayApp
 {
     public class WebServer
     {
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        internal NotifyIcon TrayNotifyIcon=null;
         private readonly HttpListener _listener = new HttpListener();
         private readonly Func<HttpListenerContext, bool> _responderMethod;
 
@@ -63,7 +65,7 @@ namespace Html5WebSCSTrayApp
                                 _responderMethod(ctx);
 
                             }
-                            catch (Exception e)
+                            catch (MyException e)
                             {
                                 //if (ctx.Response.Headers.Get("Accept").IndexOf("json")>0)
                                 /*ctx.Response.StatusCode = 500;
@@ -73,15 +75,21 @@ namespace Html5WebSCSTrayApp
     */
                                 var objResp = new JObject();
                                 objResp.Add("status", "failed");
-                                objResp.Add("reasonCode", 500);
-                                objResp.Add("reasonText", e.Message+"\n"+e.StackTrace);
-                                
+                                objResp.Add("reasonCode", e.errorcode);
+                                if (!e.Message.Equals(e.InnerException.Message)) {
+                                    objResp.Add("reasonText", e.Message + "\r\n" + e.InnerException.Message);
+                                }
+                                else
+                                {
+                                    objResp.Add("reasonText", e.Message);
+                                }
                                 log.Error(e.Message, e);
                                 ctx.Response.StatusCode = 200;
                                 ctx.Response.ContentType = "application/json";
                                 byte[] buf = Encoding.UTF8.GetBytes(objResp.ToString());
                                 ctx.Response.ContentLength64 = buf.Length;
                                 ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+                                if (TrayNotifyIcon != null) TrayNotifyIcon.ShowBalloonTip(3000, "", e.Message, ToolTipIcon.Error);
                             } // suppress any exceptions
                             finally
                             {
