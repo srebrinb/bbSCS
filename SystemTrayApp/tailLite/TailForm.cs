@@ -1123,7 +1123,7 @@ namespace ViewTailLogFile
         private void _contextMenuStrip_Opening(object sender, EventArgs e)
         {
 
-            pauseWindowToolStripMenuItem.Checked = Paused;
+           //TODO code opening
         }
 
         private void TailForm_Activated(object sender, EventArgs e)

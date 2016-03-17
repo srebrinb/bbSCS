@@ -70,13 +70,7 @@ namespace ViewTailLogFile
             this._statusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this._menuStrip = new System.Windows.Forms.MenuStrip();
             this._activeWindowMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this._copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findNextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gotoPreviousHighlightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.gotoNextHighlightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pauseWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyAsPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+           
             this.configureViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alwaysOnTopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bookmarksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,12 +78,7 @@ namespace ViewTailLogFile
             this.nextBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.previousBookmarkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearBookmarksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.switchModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.externalToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.startServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pauseServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resumeServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+
             this._tailListView = new ViewTailLogFile.LogFileListView();
             this.hiddenItem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lineItem = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -180,13 +169,7 @@ namespace ViewTailLogFile
             // _activeWindowMenuItem
             // 
             this._activeWindowMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._copyToolStripMenuItem,
-            this.findToolStripMenuItem,
-            this.findNextToolStripMenuItem,
-            this.gotoPreviousHighlightToolStripMenuItem,
-            this.gotoNextHighlightToolStripMenuItem,
-            this.pauseWindowToolStripMenuItem,
-            this.copyAsPathToolStripMenuItem,
+
             toolStripSeparator2,
             this.configureViewToolStripMenuItem,
             this.alwaysOnTopToolStripMenuItem,
@@ -198,62 +181,7 @@ namespace ViewTailLogFile
             this._activeWindowMenuItem.Size = new System.Drawing.Size(39, 20);
             this._activeWindowMenuItem.Text = "Edit";
             this._activeWindowMenuItem.DropDownOpening += new System.EventHandler(this._contextMenuStrip_Opening);
-            // 
-            // _copyToolStripMenuItem
-            // 
-            this._copyToolStripMenuItem.Name = "_copyToolStripMenuItem";
-            this._copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this._copyToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this._copyToolStripMenuItem.Text = "Copy";
-            this._copyToolStripMenuItem.Click += new System.EventHandler(this._copyToolStripMenuItem_Click);
-            // 
-            // findToolStripMenuItem
-            // 
-            this.findToolStripMenuItem.Name = "findToolStripMenuItem";
-            this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.findToolStripMenuItem.Text = "Find...";
-            this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
-            // 
-            // findNextToolStripMenuItem
-            // 
-            this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
-            this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.findNextToolStripMenuItem.Text = "Find Next";
-            this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
-            // 
-            // gotoPreviousHighlightToolStripMenuItem
-            // 
-            this.gotoPreviousHighlightToolStripMenuItem.Name = "gotoPreviousHighlightToolStripMenuItem";
-            this.gotoPreviousHighlightToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Up)));
-            this.gotoPreviousHighlightToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.gotoPreviousHighlightToolStripMenuItem.Text = "Goto Previous Highlight";
-            this.gotoPreviousHighlightToolStripMenuItem.Click += new System.EventHandler(this.gotoPreviousHighlightToolStripMenuItem_Click);
-            // 
-            // gotoNextHighlightToolStripMenuItem
-            // 
-            this.gotoNextHighlightToolStripMenuItem.Name = "gotoNextHighlightToolStripMenuItem";
-            this.gotoNextHighlightToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Down)));
-            this.gotoNextHighlightToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.gotoNextHighlightToolStripMenuItem.Text = "Goto Next Highlight";
-            this.gotoNextHighlightToolStripMenuItem.Click += new System.EventHandler(this.gotoNextHighlightToolStripMenuItem_Click);
-            // 
-            // pauseWindowToolStripMenuItem
-            // 
-            this.pauseWindowToolStripMenuItem.Name = "pauseWindowToolStripMenuItem";
-            this.pauseWindowToolStripMenuItem.ShortcutKeyDisplayString = "Pause";
-            this.pauseWindowToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.pauseWindowToolStripMenuItem.Text = "Pause Window";
-            this.pauseWindowToolStripMenuItem.Click += new System.EventHandler(this.pauseWindowToolStripMenuItem_Click);
-            // 
-            // copyAsPathToolStripMenuItem
-            // 
-            this.copyAsPathToolStripMenuItem.Name = "copyAsPathToolStripMenuItem";
-            this.copyAsPathToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-            this.copyAsPathToolStripMenuItem.Text = "Copy as path";
-            this.copyAsPathToolStripMenuItem.Click += new System.EventHandler(this.copyAsPathToolStripMenuItem_Click);
-            // 
+
             // configureViewToolStripMenuItem
             // 
             this.configureViewToolStripMenuItem.Name = "configureViewToolStripMenuItem";
@@ -309,36 +237,7 @@ namespace ViewTailLogFile
             this.clearBookmarksToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.clearBookmarksToolStripMenuItem.Text = "Clear Bookmarks";
             this.clearBookmarksToolStripMenuItem.Click += new System.EventHandler(this.clearBookmarksToolStripMenuItem_Click);
-            // 
-            // switchModeToolStripMenuItem
-            // 
-            this.switchModeToolStripMenuItem.Name = "switchModeToolStripMenuItem";
-            this.switchModeToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // externalToolsToolStripMenuItem
-            // 
-            this.externalToolsToolStripMenuItem.Name = "externalToolsToolStripMenuItem";
-            this.externalToolsToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // startServiceToolStripMenuItem
-            // 
-            this.startServiceToolStripMenuItem.Name = "startServiceToolStripMenuItem";
-            this.startServiceToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // stopServiceToolStripMenuItem
-            // 
-            this.stopServiceToolStripMenuItem.Name = "stopServiceToolStripMenuItem";
-            this.stopServiceToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // pauseServiceToolStripMenuItem
-            // 
-            this.pauseServiceToolStripMenuItem.Name = "pauseServiceToolStripMenuItem";
-            this.pauseServiceToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
-            // 
-            // resumeServiceToolStripMenuItem
-            // 
-            this.resumeServiceToolStripMenuItem.Name = "resumeServiceToolStripMenuItem";
-            this.resumeServiceToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
+            
             // 
             // _tailListView
             // 
@@ -409,25 +308,15 @@ namespace ViewTailLogFile
         private System.Windows.Forms.ToolStripStatusLabel _statusTextBar;
         private System.Windows.Forms.MenuStrip _menuStrip;
         private System.Windows.Forms.ToolStripMenuItem _activeWindowMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem _copyToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem switchModeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem startServiceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem stopServiceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pauseServiceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem resumeServiceToolStripMenuItem;
+
         private System.Windows.Forms.ToolStripMenuItem configureViewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem gotoNextHighlightToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem gotoPreviousHighlightToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pauseWindowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem externalToolsToolStripMenuItem;
+
         private System.Windows.Forms.ToolStripMenuItem bookmarksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toggleBookmarkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextBookmarkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem previousBookmarkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearBookmarksToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem copyAsPathToolStripMenuItem;
+
         private System.Windows.Forms.ToolStripMenuItem alwaysOnTopToolStripMenuItem;
     }
 }
