@@ -67,5 +67,9 @@ namespace ViewTailLogFile
             mdiForm.Show();
             
         }
+        public bool getClosed()
+        {
+           return mdiForm.closed;
+        }
     }
 }

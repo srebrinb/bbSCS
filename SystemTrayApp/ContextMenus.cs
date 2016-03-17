@@ -98,10 +98,12 @@ namespace Html5WebSCSTrayApp
         void ViewLog_Click(object sender, EventArgs e)
         {
             // Process.Start("log4net.log", null);
-            if (viewLog == null)
+            if (viewLog == null || viewLog.getClosed())
             {
                 viewLog = new ViewTailLogFile.ViewLog("log4net.log");
             }
+
+            
             viewLog.Show();
             Application.DoEvents();
         }

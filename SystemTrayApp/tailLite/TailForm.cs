@@ -104,7 +104,7 @@ namespace ViewTailLogFile
         Color _bookmarkBackColor = Color.DarkGreen; // Default bookmark background color
         List<int> _bookmarks = new List<int>();
         ThreadPoolQueue _threadPoolQueue = null;
-
+        public bool closed = false;
         public TailForm()
         {
             InitializeComponent();
@@ -172,7 +172,7 @@ namespace ViewTailLogFile
 
             if (tailConfig.FileChangeCheckInterval > 0)
                 _tailTimer.Interval = tailConfig.FileChangeCheckInterval;
-
+            
             
 
             _loghitCounter = -1;
@@ -718,6 +718,7 @@ namespace ViewTailLogFile
             _tailTimer.Enabled = false;
             if (_logFileCache != null)
                 _logFileCache.Reset();
+            closed = true;
         }
 
         private void _tailListView_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
