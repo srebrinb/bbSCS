@@ -100,7 +100,6 @@ namespace ViewTailLogFile
         List<TailKeywordConfig> _keywordHighlight;
         int _loghitCounter = -1;
         bool _displayTabIcon = false;
-        List<ExternalToolConfig> _externalTools;
         Color _bookmarkTextColor = Color.Yellow;    // Default bookmark text color
         Color _bookmarkBackColor = Color.DarkGreen; // Default bookmark background color
         List<int> _bookmarks = new List<int>();
@@ -174,24 +173,7 @@ namespace ViewTailLogFile
             if (tailConfig.FileChangeCheckInterval > 0)
                 _tailTimer.Interval = tailConfig.FileChangeCheckInterval;
 
-            _externalTools = tailConfig.ExternalTools;
-            externalToolsToolStripMenuItem.DropDownItems.Clear();
-            externalToolsToolStripMenuItem.Enabled = false;
-            if (_externalTools != null)
-            {
-                foreach (ExternalToolConfig externalTool in _externalTools)
-                {
-                    ToolStripMenuItem toolItem = externalToolsToolStripMenuItem.DropDownItems.Add(externalTool.Name) as ToolStripMenuItem;
-                    if (toolItem != null)
-                    {
-                        toolItem.Tag = externalTool;
-                        toolItem.Click += new EventHandler(externalToolMenuItem_Click);
-                        if (externalTool.ShortcutKeyEnum.HasValue)
-                            toolItem.ShortcutKeys = externalTool.ShortcutKeyEnum.Value;
-                    }
-                    externalToolsToolStripMenuItem.Enabled = true;
-                }
-            }
+            
 
             _loghitCounter = -1;
             _keywordHighlight = tailConfig.KeywordHighlight;
@@ -212,12 +194,7 @@ namespace ViewTailLogFile
                     if (keyword.LogHitCounter)
                         _loghitCounter = 0;
 
-                    if (!string.IsNullOrEmpty(keyword.ExternalToolName))
-                    {
-                        keyword.ExternalToolConfig = _externalTools.Find((externalTool) => string.Compare(externalTool.Name, keyword.ExternalToolName) == 0);
-                        if (_threadPoolQueue == null)
-                            _threadPoolQueue = new ThreadPoolQueue();   // Prepare the threadpool for use
-                    }
+                    
                 }
             }
 
@@ -439,8 +416,6 @@ namespace ViewTailLogFile
             tailConfig.FormBookmarkTextColor = _bookmarkTextColor;
 
             tailConfig.KeywordHighlight = _keywordHighlight;
-
-            tailConfig.ExternalTools = _externalTools;
 
             tailConfig.FileCacheSize = _logFileCache.Items.Count;
             tailConfig.EnumFileEncoding = _logTailStream.FileEncoding;
@@ -1003,12 +978,7 @@ namespace ViewTailLogFile
                 {
                     if (keywordMatch.LogHitCounter)
                         _loghitCounter++;
-                    if (keywordMatch.ExternalToolConfig != null)
-                    {
-                        CheckExternalToolResults();
-                        if (_threadPoolQueue != null)
-                            _threadPoolQueue.QueueRequest(ExecuteExternalTool, GenerateExternalTool(keywordMatch.ExternalToolConfig, line, lineCount, keywordMatch.Keyword));
-                    }
+                    
                     if (keywordMatch.AlertHighlight.Value)
                         warningIcon = true;
                 }
@@ -1127,73 +1097,7 @@ namespace ViewTailLogFile
             _tailListView.Update();
         }
 
-        
-
-
-        void externalToolMenuItem_Click(object sender, EventArgs e)
-        {
-            ToolStripItem toolItem = sender as ToolStripItem;
-            if (toolItem != null)
-            {
-                ExternalToolConfig toolConfig = toolItem.Tag as ExternalToolConfig;
-                if (toolConfig != null)
-                {
-                    ExternalTool tool = null;
-                    if (_tailListView.FocusedItem != null)
-                        tool = GenerateExternalTool(toolConfig, _tailListView.FocusedItem.Text, _tailListView.FocusedItem.Index + 1, string.Empty);
-                    else
-                        tool = GenerateExternalTool(toolConfig, string.Empty, null, string.Empty);
-
-                    try
-                    {
-                        tool.Execute();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(this, "External Tool '" + toolConfig.Name + "' failed: " + ex.Message);
-                    }
-                }
-            }
-        }
-
-        private ExternalTool GenerateExternalTool(ExternalToolConfig toolConfig, string line, int? lineNumber, string keywordMatch)
-        {
-            Dictionary<ExternalTool.ParameterName, string> fileParameters = new Dictionary<ExternalTool.ParameterName, string>();
-            fileParameters[ExternalTool.ParameterName.FilePath] = _logTailStream != null ? _logTailStream.Name : string.Empty;
-            fileParameters[ExternalTool.ParameterName.FileDirectory] = Path.GetDirectoryName(fileParameters[ExternalTool.ParameterName.FilePath]);
-            fileParameters[ExternalTool.ParameterName.FileName] = Path.GetFileName(fileParameters[ExternalTool.ParameterName.FilePath]);
-            fileParameters[ExternalTool.ParameterName.SessionDirectory] = _configPath;
-       //     fileParameters[ExternalTool.ParameterName.SessionPath] = MainForm.Instance.CurrenTailConfig;
-            fileParameters[ExternalTool.ParameterName.SessionFileName] = Path.GetFileName(fileParameters[ExternalTool.ParameterName.SessionPath]);
-            fileParameters[ExternalTool.ParameterName.SessionName] = Path.GetFileNameWithoutExtension(fileParameters[ExternalTool.ParameterName.SessionPath]);
-            fileParameters[ExternalTool.ParameterName.ViewName] = _formTitle;
-            fileParameters[ExternalTool.ParameterName.ProgramDirectory] = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            fileParameters[ExternalTool.ParameterName.LineText] = line != null ? line : string.Empty;
-            fileParameters[ExternalTool.ParameterName.LineNumber] = lineNumber.HasValue ? lineNumber.Value.ToString() : string.Empty;
-            fileParameters[ExternalTool.ParameterName.KeywordText] = keywordMatch != null ? keywordMatch : string.Empty;
-
-            ExternalTool tool = new ExternalTool(toolConfig, fileParameters);
-            return tool;
-        }
-
-        private void ExecuteExternalTool(object state)
-        {
-            ExternalTool tool = state as ExternalTool;
-
-            try
-            {
-                if (tool != null)
-                    tool.Execute();
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException("External Tool '" + tool.ToolConfig.Name + "' failed: " + ex.Message, ex);
-            }
-        }
-
-        
-
-        
+          
 
         private void _contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
@@ -1310,8 +1214,7 @@ namespace ViewTailLogFile
                                         configFileOther.FontInvariant = configFile.FontInvariant;
                                     if (configFormApply._checkboxKeywords.Checked)
                                         configFileOther.KeywordHighlight = configFile.KeywordHighlight;
-                                    if (configFormApply._checkboxTools.Checked)
-                                        configFileOther.ExternalTools = configFile.ExternalTools;
+
                                     tailForm.LoadConfig(configFileOther, _configPath);
                                 }
                             }

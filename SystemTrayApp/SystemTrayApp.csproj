@@ -137,12 +137,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Signer.cs" />
     <Compile Include="SignerService.cs" />
-    <Compile Include="tailLite\CPUMeter.cs" />
-    <Compile Include="tailLite\ExternalTool.cs" />
-    <Compile Include="tailLite\ExternalToolConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="tailLite\ExternalToolConfigForm.Designer.cs" />
     <Compile Include="tailLite\ITailForm.cs" />
     <Compile Include="tailLite\KeywordConfigForm.cs">
       <SubType>Form</SubType>
@@ -183,7 +177,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="tailLite\ExternalToolConfigForm.resx" />
     <EmbeddedResource Include="tailLite\KeywordConfigForm.resx" />
     <EmbeddedResource Include="tailLite\TailConfigApplyAllForm.resx" />
     <EmbeddedResource Include="tailLite\TailConfigForm.resx" />

@@ -85,7 +85,6 @@ namespace ViewTailLogFile
             this._edtWordBtn = new System.Windows.Forms.Button();
             this._addWordBtn = new System.Windows.Forms.Button();
             this._keywordListView = new System.Windows.Forms.ListView();
-            this._tabPageExtTools = new System.Windows.Forms.TabPage();
             this._moveDownToolBtn = new System.Windows.Forms.Button();
             this._moveUpToolBtn = new System.Windows.Forms.Button();
             this._delToolBtn = new System.Windows.Forms.Button();
@@ -116,7 +115,6 @@ namespace ViewTailLogFile
             this._tabPageView.SuspendLayout();
             this._tabPageFile.SuspendLayout();
             this._tabPageKeyWords.SuspendLayout();
-            this._tabPageExtTools.SuspendLayout();
             this.SuspendLayout();
             // 
             // label2
@@ -244,7 +242,6 @@ namespace ViewTailLogFile
             this._tabControl.Controls.Add(this._tabPageView);
             this._tabControl.Controls.Add(this._tabPageFile);
             this._tabControl.Controls.Add(this._tabPageKeyWords);
-            this._tabControl.Controls.Add(this._tabPageExtTools);
             this._tabControl.Location = new System.Drawing.Point(6, 6);
             this._tabControl.Name = "_tabControl";
             this._tabControl.SelectedIndex = 0;
@@ -524,22 +521,6 @@ namespace ViewTailLogFile
             this._keywordListView.View = System.Windows.Forms.View.Details;
             this._keywordListView.DoubleClick += new System.EventHandler(this._edtWordBtn_Click);
             // 
-            // _tabPageExtTools
-            // 
-            this._tabPageExtTools.Controls.Add(this._moveDownToolBtn);
-            this._tabPageExtTools.Controls.Add(this._moveUpToolBtn);
-            this._tabPageExtTools.Controls.Add(this._delToolBtn);
-            this._tabPageExtTools.Controls.Add(this._editToolBtn);
-            this._tabPageExtTools.Controls.Add(this._addToolBtn);
-            this._tabPageExtTools.Controls.Add(this._extToolsListView);
-            this._tabPageExtTools.Location = new System.Drawing.Point(4, 22);
-            this._tabPageExtTools.Name = "_tabPageExtTools";
-            this._tabPageExtTools.Padding = new System.Windows.Forms.Padding(3);
-            this._tabPageExtTools.Size = new System.Drawing.Size(359, 207);
-            this._tabPageExtTools.TabIndex = 3;
-            this._tabPageExtTools.Text = "External Tools";
-            this._tabPageExtTools.UseVisualStyleBackColor = true;
-            // 
             // _moveDownToolBtn
             // 
             this._moveDownToolBtn.Location = new System.Drawing.Point(276, 147);
@@ -559,55 +540,8 @@ namespace ViewTailLogFile
             this._moveUpToolBtn.Text = "Move Up";
             this._moveUpToolBtn.UseVisualStyleBackColor = true;
             this._moveUpToolBtn.Click += new System.EventHandler(this._moveUpToolBtn_Click);
-            // 
-            // _delToolBtn
-            // 
-            this._delToolBtn.Location = new System.Drawing.Point(276, 64);
-            this._delToolBtn.Name = "_delToolBtn";
-            this._delToolBtn.Size = new System.Drawing.Size(75, 23);
-            this._delToolBtn.TabIndex = 8;
-            this._delToolBtn.Text = "Remove";
-            this._delToolBtn.UseVisualStyleBackColor = true;
-            this._delToolBtn.Click += new System.EventHandler(this._delToolBtn_Click);
-            // 
-            // _editToolBtn
-            // 
-            this._editToolBtn.Location = new System.Drawing.Point(276, 35);
-            this._editToolBtn.Name = "_editToolBtn";
-            this._editToolBtn.Size = new System.Drawing.Size(75, 23);
-            this._editToolBtn.TabIndex = 7;
-            this._editToolBtn.Text = "Edit...";
-            this._editToolBtn.UseVisualStyleBackColor = true;
-            this._editToolBtn.Click += new System.EventHandler(this._editToolBtn_Click);
-            // 
-            // _addToolBtn
-            // 
-            this._addToolBtn.Location = new System.Drawing.Point(276, 6);
-            this._addToolBtn.Name = "_addToolBtn";
-            this._addToolBtn.Size = new System.Drawing.Size(75, 23);
-            this._addToolBtn.TabIndex = 6;
-            this._addToolBtn.Text = "Add...";
-            this._addToolBtn.UseVisualStyleBackColor = true;
-            this._addToolBtn.Click += new System.EventHandler(this._addToolBtn_Click);
-            // 
-            // _extToolsListView
-            // 
-            this._extToolsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._extToolsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            toolNameColumnHeader,
-            toolShortcutColumnHeader});
-            this._extToolsListView.FullRowSelect = true;
-            this._extToolsListView.HideSelection = false;
-            this._extToolsListView.Location = new System.Drawing.Point(6, 6);
-            this._extToolsListView.MultiSelect = false;
-            this._extToolsListView.Name = "_extToolsListView";
-            this._extToolsListView.Size = new System.Drawing.Size(264, 195);
-            this._extToolsListView.TabIndex = 5;
-            this._extToolsListView.UseCompatibleStateImageBehavior = false;
-            this._extToolsListView.View = System.Windows.Forms.View.Details;
-            this._extToolsListView.DoubleClick += new System.EventHandler(this._editToolBtn_Click);
+           
+
             // 
             // _acceptBtn
             // 
@@ -679,7 +613,7 @@ namespace ViewTailLogFile
             this._tabPageFile.ResumeLayout(false);
             this._tabPageFile.PerformLayout();
             this._tabPageKeyWords.ResumeLayout(false);
-            this._tabPageExtTools.ResumeLayout(false);
+
             this.ResumeLayout(false);
 
         }
@@ -710,7 +644,7 @@ namespace ViewTailLogFile
         private System.Windows.Forms.Button _browseBtn;
         private System.Windows.Forms.CheckBox _displayIconChk;
         private System.Windows.Forms.CheckBox _titleMatchFilenameChk;
-        private System.Windows.Forms.TabPage _tabPageExtTools;
+
         private System.Windows.Forms.Button _delToolBtn;
         private System.Windows.Forms.Button _editToolBtn;
         private System.Windows.Forms.Button _addToolBtn;

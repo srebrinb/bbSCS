@@ -110,7 +110,6 @@ namespace ViewTailLogFile
             {
                 _tabControl.TabPages.Remove(_tabPageFile);
                 _tabControl.TabPages.Remove(_tabPageKeyWords);
-                _tabControl.TabPages.Remove(_tabPageExtTools);
                 _applyAllBtn.Visible = false;
                 _bookmarkTextColorBtn.Visible = false;
                 _bookmarkBackColorBtn.Visible = false;
@@ -294,37 +293,7 @@ namespace ViewTailLogFile
             _titleMatchFilenameChk.Enabled = _fileCheckPatternChk.Checked;
         }
 
-        private void _addToolBtn_Click(object sender, EventArgs e)
-        {
-            ExternalToolConfigForm dlg = new ExternalToolConfigForm(null);
-            if (dlg.ShowDialog(this) == DialogResult.OK && !String.IsNullOrEmpty(dlg.ExternalToolConfig.Name))
-            {
-                ListViewItem lvi = _extToolsListView.Items.Add(new ListViewItem());
-                UpdateExtToolListItem(dlg.ExternalToolConfig, ref lvi);
-            }
-        }
-
-        private void _editToolBtn_Click(object sender, EventArgs e)
-        {
-            if (_extToolsListView.SelectedItems.Count == 0)
-                return;
-
-            ExternalToolConfigForm dlg = new ExternalToolConfigForm(_extToolsListView.SelectedItems[0].Tag as ExternalToolConfig);
-            if (dlg.ShowDialog(this) == DialogResult.OK && !String.IsNullOrEmpty(dlg.ExternalToolConfig.Name))
-            {
-                ListViewItem lvi = _extToolsListView.SelectedItems[0];
-                UpdateExtToolListItem(dlg.ExternalToolConfig, ref lvi);
-                _extToolsListView.Update();
-            }
-        }
-
-        private void _delToolBtn_Click(object sender, EventArgs e)
-        {
-            if (_extToolsListView.SelectedItems.Count == 0)
-                return;
-
-            _extToolsListView.Items.Remove(_extToolsListView.SelectedItems[0]);
-        }
+        
 
         private void _moveUpToolBtn_Click(object sender, EventArgs e)
         {

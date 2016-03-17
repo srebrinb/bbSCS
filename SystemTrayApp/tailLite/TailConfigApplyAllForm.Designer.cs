@@ -102,16 +102,7 @@ namespace ViewTailLogFile
             this._buttonCancel.TabIndex = 5;
             this._buttonCancel.Text = "Cancel";
             this._buttonCancel.UseVisualStyleBackColor = true;
-            // 
-            // _checkboxTools
-            // 
-            this._checkboxTools.AutoSize = true;
-            this._checkboxTools.Location = new System.Drawing.Point(12, 81);
-            this._checkboxTools.Name = "_checkboxTools";
-            this._checkboxTools.Size = new System.Drawing.Size(93, 17);
-            this._checkboxTools.TabIndex = 3;
-            this._checkboxTools.Text = "External Tools";
-            this._checkboxTools.UseVisualStyleBackColor = true;
+
             // 
             // TailConfigApplyAllForm
             // 
@@ -120,7 +111,7 @@ namespace ViewTailLogFile
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this._buttonCancel;
             this.ClientSize = new System.Drawing.Size(252, 142);
-            this.Controls.Add(this._checkboxTools);
+
             this.Controls.Add(this._buttonCancel);
             this.Controls.Add(this._buttonOk);
             this.Controls.Add(this._checkboxKeywords);

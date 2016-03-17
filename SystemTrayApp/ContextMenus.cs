@@ -57,7 +57,7 @@ namespace Html5WebSCSTrayApp
             item.Click += new EventHandler(InstallSSLCert_Click);
             item.Image = Resources.ssl_certificates;
             menu.Items.Add(item);
-            ToolStripButton itemComboBox = new ToolStripButton();
+            ToolStripMenuItem itemComboBox = new ToolStripMenuItem();
             itemComboBox.Text = "Startup";
             itemComboBox.CheckOnClick = true;
             itemComboBox.Checked = InstallSetup.GetStartup();
