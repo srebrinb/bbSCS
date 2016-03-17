@@ -105,6 +105,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
@@ -136,6 +137,35 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Signer.cs" />
     <Compile Include="SignerService.cs" />
+    <Compile Include="tailLite\CPUMeter.cs" />
+    <Compile Include="tailLite\ExternalTool.cs" />
+    <Compile Include="tailLite\ExternalToolConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tailLite\ExternalToolConfigForm.Designer.cs" />
+    <Compile Include="tailLite\ITailForm.cs" />
+    <Compile Include="tailLite\KeywordConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tailLite\KeywordConfigForm.Designer.cs" />
+    <Compile Include="tailLite\ListViewUtil.cs" />
+    <Compile Include="tailLite\LogFileCache.cs" />
+    <Compile Include="tailLite\LogFileStream.cs" />
+    <Compile Include="tailLite\TailConfig.cs" />
+    <Compile Include="tailLite\TailConfigApplyAllForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tailLite\TailConfigApplyAllForm.Designer.cs" />
+    <Compile Include="tailLite\TailConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tailLite\TailConfigForm.Designer.cs" />
+    <Compile Include="tailLite\TailForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="tailLite\TailForm.Designer.cs" />
+    <Compile Include="tailLite\ThreadPoolQueue.cs" />
+    <Compile Include="tailLite\ViewLog.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WebServer.cs" />
     <Compile Include="WebService.cs" />
@@ -153,6 +183,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="tailLite\ExternalToolConfigForm.resx" />
+    <EmbeddedResource Include="tailLite\KeywordConfigForm.resx" />
+    <EmbeddedResource Include="tailLite\TailConfigApplyAllForm.resx" />
+    <EmbeddedResource Include="tailLite\TailConfigForm.resx" />
+    <EmbeddedResource Include="tailLite\TailForm.resx" />
     <None Include="app.config" />
     <None Include="htmls\lib\font-awesome\fonts\fontawesome-webfont.eot%40">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -6,26 +6,26 @@ using System.Drawing;
 
 namespace Html5WebSCSTrayApp
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	class ContextMenus
-	{
-		/// <summary>
-		/// Is the About box displayed?
-		/// </summary>
-		bool isAboutLoaded = false;
+    /// <summary>
+    /// 
+    /// </summary>
+    class ContextMenus
+    {
+        /// <summary>
+        /// Is the About box displayed?
+        /// </summary>
+        bool isAboutLoaded = false;
 
-		/// <summary>
-		/// Creates this instance.
-		/// </summary>
-		/// <returns>ContextMenuStrip</returns>
-		public ContextMenuStrip Create()
-		{
+        /// <summary>
+        /// Creates this instance.
+        /// </summary>
+        /// <returns>ContextMenuStrip</returns>
+        public ContextMenuStrip Create()
+        {
             // Add the default menu options.
             ContextMenuStrip menu = new ContextMenuStrip();
-			ToolStripMenuItem item;
-			ToolStripSeparator sep;
+            ToolStripMenuItem item;
+            ToolStripSeparator sep;
             ToolStripLabel label = new ToolStripLabel();
             label.Text = Application.ProductName;
 
@@ -33,7 +33,7 @@ namespace Html5WebSCSTrayApp
 
             sep = new ToolStripSeparator();
             menu.Items.Add(sep);
-            
+
             item = new ToolStripMenuItem();
             item.Text = "View Web";
             item.Click += new EventHandler(OpenWeb_Click);
@@ -44,10 +44,10 @@ namespace Html5WebSCSTrayApp
             menu.Items.Add(item);
             menu.Items.Add(new ToolStripSeparator());
             item = new ToolStripMenuItem();
-			item.Text = "About";
-			item.Click += new EventHandler(About_Click);
-			item.Image = Resources.About;
-			menu.Items.Add(item);
+            item.Text = "About";
+            item.Click += new EventHandler(About_Click);
+            item.Image = Resources.About;
+            menu.Items.Add(item);
             item = new ToolStripMenuItem();
             item.Text = "Log";
             item.Click += new EventHandler(ViewLog_Click);
@@ -61,28 +61,28 @@ namespace Html5WebSCSTrayApp
             itemComboBox.Text = "Startup";
             itemComboBox.CheckOnClick = true;
             itemComboBox.Checked = InstallSetup.GetStartup();
-      //      itemComboBox.Click += new System.EventHandler(Startup_Click);
+            //      itemComboBox.Click += new System.EventHandler(Startup_Click);
             itemComboBox.CheckedChanged += new System.EventHandler(Startup_Click);
             menu.Items.Add(itemComboBox);
             menu.Items.Add(new ToolStripSeparator());
 
             // Exit.
             item = new ToolStripMenuItem();
-			item.Text = "Exit";
-			item.Click += new System.EventHandler(Exit_Click);
-			item.Image = Resources.Exit;
-			menu.Items.Add(item);
+            item.Text = "Exit";
+            item.Click += new System.EventHandler(Exit_Click);
+            item.Image = Resources.Exit;
+            menu.Items.Add(item);
 
-			return menu;
-		}
+            return menu;
+        }
 
-		/// <summary>
-		/// Handles the Click event of the Explorer control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		void InstallSSLCert_Click(object sender, EventArgs e)
-		{
+        /// <summary>
+        /// Handles the Click event of the Explorer control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        void InstallSSLCert_Click(object sender, EventArgs e)
+        {
             Html5WebSCSTrayApp.InstallSetup.runAs(Program.executablePath);
             Application.Exit();
         }
@@ -94,9 +94,16 @@ namespace Html5WebSCSTrayApp
         {
             Process.Start(Program.settings.httpsUri, null);
         }
+        ViewTailLogFile.ViewLog viewLog = null;
         void ViewLog_Click(object sender, EventArgs e)
         {
-            Process.Start("log4net.log", null);
+            // Process.Start("log4net.log", null);
+            if (viewLog == null)
+            {
+                viewLog = new ViewTailLogFile.ViewLog("log4net.log");
+            }
+            viewLog.Show();
+            Application.DoEvents();
         }
         /// <summary>
         /// Handles the Click event of the About control.
@@ -104,7 +111,7 @@ namespace Html5WebSCSTrayApp
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         void About_Click(object sender, EventArgs e)
-		{
+        {
             About_Show();
 
         }
@@ -124,10 +131,10 @@ namespace Html5WebSCSTrayApp
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         void Exit_Click(object sender, EventArgs e)
-		{
-			// Quit without further ado.
-			Application.Exit();
-		}
+        {
+            // Quit without further ado.
+            Application.Exit();
+        }
         void Startup_Click(object sender, EventArgs e)
         {
             InstallSetup.SetStartup(!InstallSetup.GetStartup());
