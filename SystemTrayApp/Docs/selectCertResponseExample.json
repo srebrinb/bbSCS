@@ -1,0 +1,32 @@
+{
+  "Subject": "E=test@test.bg, CN=Test Profesionalen, OU=BULSTAT:1111111111, OU=Professional Certificate - UES, O=TEST AD, S=EGN:1111111111, C=BG",
+  "SerialNumber": "009BA6E2",
+  "Issuer": "....., C=BG",
+  "Thumbprint": "3C0DB07FCEECCB9DD3D961D9EA3F560CA1EB2403",
+  "DateTimeNotAfter": "2016-05-12T15:08:58",
+  "DateTimeNotBefore": "2015-05-13T15:08:58",
+  "Extensions": [
+    {
+      "Oid": "2.5.29.14",
+      "Name": "Subject Key Identifier",
+      "Value": "5E59E373F8A09CA780FCAA1BCE98E28C0A544376",
+      "RawValue": "BBReWeNz+KCcp4D8qhvOmOKMClRDdg=="
+    },
+    {
+      "Oid": "2.5.29.35",
+      "Name": "Authority Key Identifier",
+      "Value": "30E30A1F1C40D59A28A8D8902D1862806CE23907",
+      "RawValue": "MIGPgBQw4wofHEDVm..."
+    }
+  ],
+  "chain": [
+    "MIIHoTCCBY...",
+    "MIIHoTCCBY...",
+    "MIIHoTCCBY..."
+  ],
+  "CertX509": "MIIHoTCCBYmgAw....",
+  "Valid": true,
+  "version": "1.0",
+  "status": "ok",
+  "reasonCode": 200
+}

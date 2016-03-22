@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "selector": {
+    "issuers": [
+      "CN=<issuer 1 name>",
+      "CN=<issuer 2 name>"
+    ],
+    "keyusages": [
+      "nonrepudiation"
+    ],
+    "validate": true,
+    "thumbprint": "Hex SHA1 thumbprint",
+    "profiles": "base"
+  }
+}

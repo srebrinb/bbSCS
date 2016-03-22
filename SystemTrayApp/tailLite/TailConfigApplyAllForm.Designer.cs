@@ -43,6 +43,7 @@ namespace ViewTailLogFile
         /// </summary>
         private void InitializeComponent()
         {
+            this.ClientSize = new System.Drawing.Size(901, 239);
             this._checkBoxColors = new System.Windows.Forms.CheckBox();
             this._checkBoxFont = new System.Windows.Forms.CheckBox();
             this._checkboxKeywords = new System.Windows.Forms.CheckBox();

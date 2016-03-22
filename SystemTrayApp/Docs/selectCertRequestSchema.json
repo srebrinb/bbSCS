@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "/",
+  "type": "object",
+  "properties": {
+    "version": {
+      "id": "version",
+      "type": "string",
+      "enum": [
+        null,
+        "1.0"
+      ]
+    },
+    "selector": {
+      "id": "selector",
+      "type": "object",
+      "properties": {
+        "issuers": {
+          "id": "issuers",
+          "type": "array",
+          "items": [
+            {
+              "id": "0",
+              "type": "string"
+            },
+            {
+              "id": "1",
+              "type": "string"
+            }
+          ]
+        },
+        "keyusages": {
+          "id": "keyusages",
+          "type": "array",
+          "items": {
+            "id": "0",
+            "type": "string",
+            "enum": [
+              null,
+              "nonrepudiation"
+            ]
+          }
+        },
+        "validate": {
+          "id": "validate",
+          "type": "boolean"
+        },
+        "thumbprint": {
+          "id": "thumbprint",
+          "type": "string"
+        },
+        "profiles": {
+          "id": "profiles",
+          "type": "string",
+          "enum": [
+            "base","extensions","chain","certx509"
+          ]
+        }
+      }
+    }
+  }
+}

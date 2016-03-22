@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "signatureAlgorithm": "SHA256withRSA",
+  "signatureType": "signature",
+  "signature": "eHF1oXKD62+KTSUb3GPNMhYumwjtL...EVvvo++k+fzDK41nvK5lAZSkA==",
+  "signatures": [
+    "eHF1oXKD62+KTSUb3GPNMhYumwjtL...EVvvo++k+fzDK41nvK5lAZSkA==",
+    "eHF1oXKD62+KTSUb3GPNMhYumwjtL...EVvvo++k+fzDK41nvK5lAZSkA=="
+  ],
+  "chain": [
+    "MIIGADCCBOigAwIBAgIEBfetjDA...iLniyk0+r5aasoF7TY9n4tpMWmg==",
+    "MIIFcDCCBFigAwIBAgIDAdbDMA0...fBVhROQzKoDAk1DPtg1gOADYfLg==",
+    "MIIEHjCCAwagAwIBAgIDAdTAMA0...lEtXfFCfv9DA8MeVIUfa2pTH6Tk="
+  ],
+  "status": "ok",
+  "reasonCode": 200,
+  "reasonText": "Signature generated"
+}

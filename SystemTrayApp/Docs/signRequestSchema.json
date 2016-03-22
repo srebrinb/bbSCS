@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "/",
+  "type": "object",
+  "properties": {
+    "version": {
+      "id": "version",
+      "type": "string",
+      "default": "1.0"
+    },
+    "selector": {
+      "id": "selector",
+      "type": "object",
+      "properties": {
+        "issuers": {
+          "id": "issuers",
+          "type": "array",
+          "items": [
+            {
+              "id": "0",
+              "type": "string"
+            }
+          ]
+        },
+        "keyusages": {
+          "id": "keyusages",
+          "type": "array",
+          "items": {
+            "id": "0",
+            "type": "string",
+            "default": "nonrepudiation"
+          }
+        },
+        "validate": {
+          "id": "validate",
+          "type": "boolean",
+          "default": true
+        },
+        "thumbprint": {
+          "id": "thumbprint",
+          "type": "string",
+          "default": "Hex SHA1 thumbprint"
+        }
+      }
+    },
+    "content": {
+      "id": "content",
+      "type": "string",
+      "default": "",
+      "description": "content Base64 encoding"
+    },
+    "contents": {
+      "id": "contents",
+      "type": "array",
+      "items": [
+        {
+          "id": "0",
+          "type": "string",
+          "default": "content Base64 encoding"
+        }
+      ],
+      "minItems": "1",
+      "description": "Array from content Base64 encoding"
+    },
+    "contentType": {
+      "id": "contentType",
+      "type": "string",
+      "default": "data",
+      "enum": [
+        "data","digest"
+      ]
+    },
+    "hashAlgorithm": {
+      "id": "hashAlgorithm",
+      "type": "string",
+      "default": "SHA1",
+      "enum": [
+        "SHA1","SHA256,"SHA384,"SHA512"
+      ]
+    },
+    "signatureType": {
+      "id": "signatureType",
+      "type": "string",
+      "default": "signature",
+      "enum": [
+        "signature"
+      ]
+    },
+    "forceSelectCert": {
+      "id": "forceSelectCert",
+      "type": "boolean",
+      "default": "false",
+      "description": "Force Select Cert"
+    },
+    "forcePINRquest": {
+      "id": "forcePINRquest",
+      "type": "boolean",
+      "default": "false",
+      "description": "Force Prompt Enter PIN"
+    },
+    "protectedPin": {
+      "id": "protectedPin",
+      "type": "string",
+      "default": "",
+      "description": "protectedPinBase64 encoding"
+    }
+  },
+  "required": [
+    "version",
+    "contentType",
+    "signatureType"
+  ]
+}

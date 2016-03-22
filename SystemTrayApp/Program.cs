@@ -58,7 +58,12 @@ namespace Html5WebSCSTrayApp
                 Uri https = new Uri(settings.httpsUri);
                 //         string ip = Dns.GetHostEntry(https.Host).AddressList[0].ToString();
                 Html5WebSCSTrayApp.InstallSetup.setCert(tump, https.Host + ":" + https.Port);
-                Process.Start(settings.httpsUri, null);
+                try {
+                    Process.Start(settings.httpsUri, null);
+                }
+                catch (Exception e) {
+                    MessageBox.Show(e.Message, "Start " + settings.httpsUri, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())
@@ -77,6 +82,7 @@ namespace Html5WebSCSTrayApp
                 catch (Exception e)
                 {
                     log.Error(e.Message, e);
+                    MessageBox.Show(e.Message, "Application "+ Assembly.GetExecutingAssembly().GetName().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 }
 

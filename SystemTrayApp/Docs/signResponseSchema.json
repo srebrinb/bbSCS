@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "/",
+  "type": "object",
+  "properties": {
+    "version": {
+      "id": "version",
+      "type": "string",
+      "default": "1.0"
+    },
+    "signatureAlgorithm": {
+      "id": "signatureAlgorithm",
+      "type": "string"
+    },
+    "signatureType": {
+      "id": "signatureType",
+      "type": "string"
+    },
+    "signature": {
+      "id": "signature",
+      "type": "string"
+    },
+    "signatures": {
+      "id": "signatures",
+      "type": "array",
+      "items": [
+        null,
+        null
+      ]
+    },
+    "chain": {
+      "id": "chain",
+      "type": "array",
+      "items": [
+        null,
+        null,
+        null
+      ]
+    },
+    "status": {
+      "id": "status",
+      "type": "string"
+    },
+    "reasonCode": {
+      "id": "reasonCode",
+      "type": "integer"
+    },
+    "reasonText": {
+      "id": "reasonText",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "signatureAlgorithm",
+    "signatureType",
+    "chain",
+    "status",
+    "reasonCode",
+    "reasonText"
+  ]
+}

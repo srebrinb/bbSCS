@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "selector": {
+    "issuers": [
+      "CN=<issuer 1 name>",
+      "CN=<issuer 2 name>"
+    ],
+    "keyusages": [
+      "nonrepudiation"
+    ],
+    "validate": true,
+    "thumbprint": "Hex SHA1 thumbprint"
+  },
+  "content": "content Base64 encoding ",
+  "contents": [
+    "content Base64 encoding",
+    "content Base64 encoding "
+  ],
+  "contentType": "data",
+  "hashAlgorithm": "SHA1",
+  "signatureType": "signature",
+  "forceSelectCert": false,
+  "forcePINRquest": false,
+  "protectedPin": "protectedPinBase64 encoding "
+}
