@@ -1,3 +1,4 @@
+#include <csignal>
 #include <iostream>
 #include "server/server_https.hpp"
 
@@ -24,9 +25,18 @@ void my_handler(int s) {
 	exit(1);
 }
 
+void signalHandler(int signum)
+{
+	cout << "Interrupt signal (" << signum << ") received.\n";
 
+	// cleanup and close up stuff here  
+	// terminate program  
+
+	exit(signum);
+
+}
 int main() {
-	signal(SIGINT, my_handler);
+	signal(SIGINT, signalHandler);
 
 	//HTTP-server at port 8080 using 4 threads
 	std::string ip = "127.10.1.1";

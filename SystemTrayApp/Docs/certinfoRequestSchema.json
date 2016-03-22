@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "/",
+  "type": "object",
+  "properties": {
+    "version": {
+      "id": "version",
+      "type": "string",
+      "enum": [
+        null,
+        "1.0"
+      ]
+    },
+    "certX509": {
+      "id": "certX509",
+      "type": "string",
+      "enum": [
+        null,
+        "MIGPgBQw4wofHEDVm..."
+      ]
+    },
+    "profiles": {
+      "id": "profiles",
+      "type": "string",
+      "enum": [
+        null,
+        "base"
+      ]
+    }
+  }
+}

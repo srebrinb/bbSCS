@@ -27,6 +27,7 @@ namespace SimpleWeb {
 			ServerBase<HTTPS>::ServerBase(ip, port, num_threads, timeout_request, timeout_content),
 			context(boost::asio::ssl::context::tlsv11) {
 				context.use_certificate_chain_file(cert_file);
+				
 				context.use_private_key_file(private_key_file, boost::asio::ssl::context::pem);
 				
 				if (verify_file.size()>0)
