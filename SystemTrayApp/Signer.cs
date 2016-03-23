@@ -142,18 +142,33 @@ namespace Html5WebSCSTrayApp
             //RSACryptoServiceProvider rsaSignProvider = (RSACryptoServiceProvider)cert.PrivateKey;
             if (forceClearPINCache && securePwd == null) ClearPINCache2(rsaSignProvider);
             byte[] sig = rsaSignProvider.SignHash(hashContent, CryptoConfig.MapNameToOID(HashAlgorithm));
-            signatureAlgorithm=rsaSignProvider.SignatureAlgorithm;
+            signatureAlgorithm = rsaSignProvider.SignatureAlgorithm;
             rsaSignProvider.Clear();
             rsaSignProvider.Dispose();
             Properties.Settings setting = new Properties.Settings();
             if (setting.PINCache != "true") ClearPINCache2(rsaSignProvider);
             return System.Convert.ToBase64String(sig);
-
         }
         public bool verify(string content, string signature)
         {
-            byte[] hashedData = processContent(content);
-            byte[] signatureBytes = System.Convert.FromBase64String(signature);
+            byte[] hashedData = null;
+            byte[] signatureBytes = null;
+            try
+            {
+                hashedData = processContent(content);
+            }
+            catch (Exception e)
+            {
+                throw new Exception400("Wrong content.", e);
+            }
+            try
+            {
+                signatureBytes = System.Convert.FromBase64String(signature);
+            }
+            catch (Exception e)
+            {
+                throw new Exception400("Wrong signature.", e);
+            }
             RSACryptoServiceProvider rsaVerifyProvider = (RSACryptoServiceProvider)cert.PublicKey.Key;
             return rsaVerifyProvider.VerifyHash(hashedData, CryptoConfig.MapNameToOID(HashAlgorithm), signatureBytes);
         }

@@ -25,12 +25,12 @@ namespace Html5WebSCSTrayApp
         /// </summary>
         public ProcessIcon()
         {
-            wsHTTPRequestHandler = new WebService();
+            
             // Instantiate the NotifyIcon object.
-
             ni = new NotifyIcon();
+            wsHTTPRequestHandler = new WebService(ni);
         }
-
+        
         /// <summary>
         /// Displays the icon in the system tray.
         /// </summary>

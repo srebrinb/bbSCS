@@ -14,12 +14,19 @@ using Newtonsoft.Json.Linq;
 using Html5WebSCSTrayApp;
 using Html5WebSCSTrayApp.Properties;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 namespace Html5WebSCSTrayApp
 {
     class WebService
     {
+        internal NotifyIcon TrayNotifyIcon = null;
+        public WebService() { }
+        public WebService(NotifyIcon TrayNotifyIcon)
+        {
+            this.TrayNotifyIcon = TrayNotifyIcon;
+        }
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static string sessionCookieName = "PSess";
         private static Dictionary<string, string> MimeTypesForExtensions = new Dictionary<string, string>
@@ -50,6 +57,11 @@ namespace Html5WebSCSTrayApp
                 return ms.ToArray();
             }
         }
+        private string getOrigin(HttpListenerRequest request)
+        {
+            string Origin = request.Headers.Get("Origin");
+            return Origin;
+        }
         private static string getOriginId(HttpListenerRequest request)
         {
             string Origin = request.Headers.Get("Origin");
@@ -58,6 +70,14 @@ namespace Html5WebSCSTrayApp
             SHA1 sha1 = SHA1.Create();
             byte[] id = sha1.ComputeHash(Encoding.UTF8.GetBytes(Origin+ UserAgent+ Machine));
             return System.Convert.ToBase64String(id);
+        }
+        private void TrayNotifyIconInfo(string Text)
+        {
+            if (TrayNotifyIcon != null) TrayNotifyIcon.ShowBalloonTip(2000, "", Text, ToolTipIcon.Info);
+        }
+        private void TrayNotifyIconInfo(string Title,string Text)
+        {
+            if (TrayNotifyIcon != null) TrayNotifyIcon.ShowBalloonTip(2000, Title, Text, ToolTipIcon.Info);
         }
         public bool SendResponse(HttpListenerContext ctx)
         {
@@ -93,6 +113,10 @@ namespace Html5WebSCSTrayApp
                 if (ctx.Request.IsSecureConnection) sessCookie.Secure = true;
                 ctx.Response.Cookies.Add(sessCookie);
                 log.DebugFormat("start new session {0}", sessionid);
+            }
+            if (newSession)
+            {
+                TrayNotifyIconInfo("New Session", getOrigin(request) + "\r\n" + request.RawUrl);
             }
             sSignerService.newSession = newSession;
             Options(ctx);
@@ -147,7 +171,12 @@ namespace Html5WebSCSTrayApp
                         }
 
                         log.Debug(documentContents);
+                        try { 
                         payload = JsonConvert.DeserializeObject(documentContents);
+                        }catch(Exception e)
+                        {
+                            throw new Exception400("POST Contents wrong JSON.", e);
+                        }
                     }
                     else
                     {

@@ -85,13 +85,6 @@ namespace Html5WebSCSTrayApp
             X509Certificate2Collection fcollection = lisyMyCerts(payload);
             if (fcollection.Count == 0)
             {
-                /* var objResp = new JObject();
-                 objResp.Add("version", version);
-                 objResp.Add("status", "failed");
-                 objResp.Add("reasonCode", 404);
-                 objResp.Add("reasonText", "Cert not found");
-                 return objResp.ToString();
-                 */
                 throw new Exception404("Cert not found");
             }
             if (fcollection.Count > 1)
@@ -112,14 +105,11 @@ namespace Html5WebSCSTrayApp
             CertInfo ci = new CertInfo(profile);
             CertInfo certInfo = new CertInfo();
 
-            string json = "";
             var objResp = new JObject();
             foreach (X509Certificate2 x509 in fcollection)
             {
                 certInfo = ci.getCertInfo(x509);
-             //   json = certInfo.getJsonStr();
                 selectedCert = certInfo;
-                //x509.Reset();
                 objResp =  JObject.FromObject (certInfo);
                 objResp.Add("version", version);
                 objResp.Add("status", "ok");
@@ -283,16 +273,14 @@ namespace Html5WebSCSTrayApp
                 objResp.Add("signatureAlgorithm", si.HashAlgorithm + "withRSA");
                 objResp.Add("chain", arrChain);
             }
+            catch (MyException me)
+            {
+                throw me;
+            }
             catch (Exception e)
             {
                 selectedCert = null;
                 throw new Exception500(e.Message, e);
-                /*objResp.Add("status", "failed");
-                objResp.Add("reasonCode", 500);
-                objResp.Add("reasonText", e.Message);
-                log.Error("sign error", e);
-                */
-               
             }
             return objResp.ToString();
         }
@@ -303,10 +291,29 @@ namespace Html5WebSCSTrayApp
             objResp.Add("version", version);
             try
             {
-                string content = payload.content;
-                string signature = payload.signature;
-                JArray arr = payload.chain;
-                string cert = arr[0].ToString();
+                string content;
+                string signature;
+                string cert = null;
+                try
+                {
+                    content = payload.content;
+                    if (content == "")
+                    {
+                        throw new Exception400("Content is empty.");
+                    }
+                    signature = payload.signature;
+                    if (signature == "")
+                    {
+                        throw new Exception400("Signature is empty.");
+                    }
+                    JArray arr = payload.chain;
+                    if (arr.Count<1)
+                        throw new Exception400("Chain is empty.");
+                    cert = arr[0].ToString();
+                }
+                catch (Exception e){
+                    throw new Exception400("Wrong element.",e);
+                };
                 Signer si = new Signer(cert);
                 try
                 {
@@ -325,6 +332,9 @@ namespace Html5WebSCSTrayApp
                 
                 objResp.Add("reasonCode", 200);
                 objResp.Add("result", res);
+            }catch(MyException me)
+            {
+                throw me;
             }
             catch (Exception e)
             {
@@ -423,7 +433,6 @@ namespace Html5WebSCSTrayApp
             {
                 if (RestActionAttribute.IsRestActionAttribute(method))
                 {
-
                     RestActionAttribute restAction = RestActionAttribute.getRestActionAttribute(method);
                     var objRespActions = new JObject();
                     objRespActions.Add("Name", restAction.Name);

@@ -7,18 +7,20 @@ namespace Html5WebSCSTrayApp
 {
     class Exception400: MyException
     {
-        public new int errorcode = 404;
+        
         public Exception400()
         {
+            errorcode = 400;
         }
 
         public Exception400(string message)
         : base(message)
         {
+            errorcode = 400;
         }
 
         public Exception400(string message, Exception inner)
         : base(message, inner)
-        { }
+        { errorcode = 400; }
     }
 }

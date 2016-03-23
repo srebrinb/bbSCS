@@ -12,7 +12,8 @@ namespace Html5WebSCSTrayApp
 {
     [Flags]
     public enum Profiles
-    {   none=0,
+    {
+        none = 0,
         @base = 1,
         extensions = 2,
         chain = 4,
@@ -34,12 +35,12 @@ namespace Html5WebSCSTrayApp
         [DataMember]
         public string DateTimeNotBefore;
         [DataMember(EmitDefaultValue = false)]
-        IList<Extension>  Extensions=new List<Extension>();
+        IList<Extension> Extensions = new List<Extension>();
         public X509Certificate2 certificate;
         [DataMember(EmitDefaultValue = false)]
         public IList<string> chain = new List<string>();
         [DataMember(EmitDefaultValue = false)]
-        public string CertX509="";
+        public string CertX509 = "";
         [DataMember]
         public bool Valid;
 
@@ -49,9 +50,9 @@ namespace Html5WebSCSTrayApp
         4) + Chain
         default 5) Base + Chain
         */
-       
-        
-        private Profiles profile = Profiles.@base| Profiles.chain;
+
+
+        private Profiles profile = Profiles.@base | Profiles.chain;
         public CertInfo() { }
         /// <summary>
         /// 
@@ -69,7 +70,7 @@ namespace Html5WebSCSTrayApp
         }
         public CertInfo getCertInfo(string strCert)
         {
-            X509Certificate2 certificate= new X509Certificate2(System.Convert.FromBase64String(strCert));
+            X509Certificate2 certificate = new X509Certificate2(System.Convert.FromBase64String(strCert));
             return getCertInfo(certificate);
         }
         public static Profiles getProfile(string profiles)
@@ -117,18 +118,20 @@ namespace Html5WebSCSTrayApp
                     resCert.Issuer = x509.Issuer;
                     resCert.Thumbprint = x509.Thumbprint;
                     resCert.SerialNumber = x509.GetSerialNumberString();
-                    
+
                     resCert.DateTimeNotBefore = x509.NotBefore.ToString("s");
                     resCert.DateTimeNotAfter = x509.NotAfter.ToString("s"); ;
                     resCert.Valid = x509.Verify();
-                    if (profile.HasFlag(Profiles.certx509)) { 
+                    if (profile.HasFlag(Profiles.certx509))
+                    {
                         resCert.CertX509 = System.Convert.ToBase64String(x509.GetRawCertData());
                     }
-                    if (profile.HasFlag(Profiles.extensions)) {
+                    if (profile.HasFlag(Profiles.extensions))
+                    {
                         var extensions = x509.Extensions;
                         foreach (var extension in extensions)
                         {
-                           
+
                             resCert.Extensions.Add(new Extension(extension));
                         }
                     }
@@ -141,7 +144,7 @@ namespace Html5WebSCSTrayApp
             }
             return resCert;
         }
-        
+
         public JObject getJson()
         {
             return JObject.FromObject(this);
@@ -158,10 +161,18 @@ namespace Html5WebSCSTrayApp
             string json = sr.ReadToEnd();
             return json;
         }
-      
+
         public string[] getChain()
         {
-            return chain.ToArray();
+            if (chain.Count > 0)
+            {
+                return chain.ToArray();
+            }
+            else
+            {
+                string[] certs = { System.Convert.ToBase64String(certificate.GetRawCertData()) };
+                return certs;
+            }
         }
     }
 }

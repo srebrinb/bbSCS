@@ -7,14 +7,16 @@ namespace Html5WebSCSTrayApp
 {
     class MyException : Exception
     {
-        public int errorcode = 500;
+        public int errorcode;
         public MyException()
         {
+            
         }
 
         public MyException(string message)
         : base(message)
         {
+            
         }
 
         public MyException(string message, Exception inner)
