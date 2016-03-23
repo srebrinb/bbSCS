@@ -23,6 +23,7 @@ namespace Html5WebSCSTrayApp
         CertInfo selectedCert = null;
 
         public dynamic profiles = "base";
+        internal IntPtr hWndCaller=IntPtr.Zero;
 
         private X509Certificate2Collection lisyMyCerts(dynamic payload)
         {
@@ -89,8 +90,18 @@ namespace Html5WebSCSTrayApp
             }
             if (fcollection.Count > 1)
             {
-                fcollection = X509Certificate2UI.SelectFromCollection(fcollection, "Certificate Select", "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.SingleSelection);
-
+                if (hWndCaller != IntPtr.Zero) {
+                    fcollection = X509Certificate2UI.SelectFromCollection(fcollection,
+                                                                            "Certificate Select",
+                                                                            "Select a certificate from the following list to get information on that certificate", X509SelectionFlag.SingleSelection
+                                                                            , hWndCaller);
+                }
+                else {
+                    fcollection = X509Certificate2UI.SelectFromCollection(fcollection,
+                                                                        "Certificate Select",
+                                                                        "Select a certificate from the following list to get information on that certificate",
+                                                                        X509SelectionFlag.SingleSelection);
+                }
             }
             if (fcollection.Count == 0)
             {
@@ -110,15 +121,14 @@ namespace Html5WebSCSTrayApp
             {
                 certInfo = ci.getCertInfo(x509);
                 selectedCert = certInfo;
-                objResp =  JObject.FromObject (certInfo);
+                objResp = JObject.FromObject(certInfo);
                 objResp.Add("version", version);
                 objResp.Add("status", "ok");
                 objResp.Add("reasonCode", 200);
             }
-            //TODO return status 200
-            
+
             return objResp.ToString();
-            
+
         }
         [RestAction("certs", "Get list certs")]
         public string certs(dynamic payload)
@@ -193,7 +203,7 @@ namespace Html5WebSCSTrayApp
                 }
                 catch (Exception e)
                 {
-                    throw new Exception400("Get content to sign.",e);
+                    throw new Exception400("Get content to sign.", e);
                 }
 
 
@@ -229,6 +239,10 @@ namespace Html5WebSCSTrayApp
                 log4net.NDC.Pop();
                 log4net.NDC.Push("init Signer");
                 Signer si = new Signer(selectedCert.certificate);
+                if (hWndCaller != IntPtr.Zero)
+                 {
+                    si.hWndCaller = hWndCaller;
+                }
                 si.forceClearPINCache = newSession | forcePINRquest;
                 try
                 {
@@ -247,7 +261,7 @@ namespace Html5WebSCSTrayApp
                 catch (Exception e)
                 {
                     log.Error("setPin", e);
-                    throw new Exception400("wrong pin",e);
+                    throw new Exception400("wrong pin", e);
                 }
 
                 if (multisign)
@@ -307,12 +321,13 @@ namespace Html5WebSCSTrayApp
                         throw new Exception400("Signature is empty.");
                     }
                     JArray arr = payload.chain;
-                    if (arr.Count<1)
+                    if (arr.Count < 1)
                         throw new Exception400("Chain is empty.");
                     cert = arr[0].ToString();
                 }
-                catch (Exception e){
-                    throw new Exception400("Wrong element.",e);
+                catch (Exception e)
+                {
+                    throw new Exception400("Wrong element.", e);
                 };
                 Signer si = new Signer(cert);
                 try
@@ -328,11 +343,12 @@ namespace Html5WebSCSTrayApp
                 }
                 catch { }
                 bool res = si.verify(content, signature);
-                objResp.Add("status",(res? "ok":"failed"));
-                
+                objResp.Add("status", (res ? "ok" : "failed"));
+
                 objResp.Add("reasonCode", 200);
                 objResp.Add("result", res);
-            }catch(MyException me)
+            }
+            catch (MyException me)
             {
                 throw me;
             }
@@ -356,7 +372,8 @@ namespace Html5WebSCSTrayApp
                 {
                     if (payload.certX509 != null) cert = payload.certX509;
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     throw new Exception400(e.Message, e);
                 }
                 try
@@ -374,7 +391,7 @@ namespace Html5WebSCSTrayApp
             {
                 throw new Exception500(e.Message, e);
             }
-            
+
         }
         public string ProtectPinDemo()
         {
@@ -414,7 +431,7 @@ namespace Html5WebSCSTrayApp
                 {
                     RestActionAttribute restAction = RestActionAttribute.getRestActionAttribute(method);
                     if (action.ToLower().Equals(restAction.Name.ToLower()))
-                        return true ;
+                        return true;
                 }
             }
             return false;

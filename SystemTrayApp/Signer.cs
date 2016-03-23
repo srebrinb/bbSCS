@@ -15,6 +15,7 @@ namespace Html5WebSCSTrayApp
         private HashAlgorithm hasher = new SHA1Managed();
         public bool forceClearPINCache = true;
         public string signatureAlgorithm;
+        internal IntPtr hWndCaller=IntPtr.Zero;
 
         public string HashAlgorithm
         {
@@ -137,6 +138,12 @@ namespace Html5WebSCSTrayApp
                 cspParametersTmp.KeyPassword = securePwd;
             }
             cspParametersTmp.Flags = CspProviderFlags.UseUserProtectedKey;
+            /*
+            if (hWndCaller != IntPtr.Zero)
+            {
+                cspParametersTmp.ParentWindowHandle= hWndCaller;
+            }
+            */
             csp.Clear();
             RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
             //RSACryptoServiceProvider rsaSignProvider = (RSACryptoServiceProvider)cert.PrivateKey;

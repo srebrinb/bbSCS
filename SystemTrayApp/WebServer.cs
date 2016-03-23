@@ -76,7 +76,7 @@ namespace Html5WebSCSTrayApp
                                 var objResp = new JObject();
                                 objResp.Add("status", "failed");
                                 objResp.Add("reasonCode", e.errorcode);
-                                if (!e.Message.Equals(e.InnerException.Message)) {
+                                if (e.InnerException!=null && !e.Message.Equals(e.InnerException.Message)) {
                                     objResp.Add("reasonText", e.Message + "\r\n" + e.InnerException.Message);
                                 }
                                 else

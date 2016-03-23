@@ -57,14 +57,17 @@ namespace Html5WebSCSTrayApp
                 return ms.ToArray();
             }
         }
-        private string getOrigin(HttpListenerRequest request)
+        private static string getCaller(HttpListenerRequest request, string formater="{0} {1} {2}")
         {
+            string winTitle = Utils.GetActiveWindowTitle();
             string Origin = request.Headers.Get("Origin");
-            return Origin;
+            string Referer = request.Headers.Get("Referer");
+            string CallerName = string.Format(formater, winTitle , Origin,  Referer);
+            return CallerName.Trim();
         }
-        private static string getOriginId(HttpListenerRequest request)
+        private static string getCallerId(HttpListenerRequest request)
         {
-            string Origin = request.Headers.Get("Origin");
+            string Origin = getCaller(request,"{1}{2}");// request.Headers.Get("Origin");
             string UserAgent = request.UserAgent;
             string Machine = Program.executablePath;
             SHA1 sha1 = SHA1.Create();
@@ -84,6 +87,7 @@ namespace Html5WebSCSTrayApp
             HttpListenerRequest request = ctx.Request;
 
             log.InfoFormat("Request {0} {2} {1}", request.HttpMethod, request.RawUrl, (ctx.Request.IsSecureConnection ? "https" : "http"));
+            log.InfoFormat("Caller {0}",getCaller(request,"Active Windows {0} {1} {2}"));
             if (log.IsDebugEnabled)
             {
                 var headers = request.Headers;
@@ -100,7 +104,7 @@ namespace Html5WebSCSTrayApp
                 Console.WriteLine(cookie.Name + ": " + cookie.Value);
                 if (cookie.Name.Equals(sessionCookieName)) sessionid = cookie.Value;
             }
-            string originId = getOriginId(request);
+            string originId = getCallerId(request);
             string[] tm = sessionid.Split('-');
             if (tm.Length == 2 && tm[1] == originId)
             {
@@ -121,9 +125,11 @@ namespace Html5WebSCSTrayApp
             }
             if (newSession)
             {
-                TrayNotifyIconInfo("New Session", getOrigin(request) + "\r\n" + request.RawUrl);
+                TrayNotifyIconInfo("New Session", getCaller(request) + "\r\n" + request.RawUrl);
             }
             sSignerService.newSession = newSession;
+            sSignerService.hWndCaller =  Utils.GetForegroundWindow();
+
             Options(ctx);
             if (request.HttpMethod.ToUpper().Equals("OPTIONS"))
             {
