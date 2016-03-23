@@ -21,10 +21,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Collections;
-using System.Diagnostics;
-using System.Xml.Serialization;
-using System.Xml;
+using Html5WebSCSTrayApp;
 
 namespace ViewTailLogFile
 {
@@ -132,10 +129,10 @@ namespace ViewTailLogFile
         public void LoadFile(string filepath)
         {
             TailFileConfig tailConfig = new TailFileConfig();
-           
+
             tailConfig.FilePath = filepath;
             LoadConfig(tailConfig, "");
-            
+
         }
 
         public void LoadConfig(TailFileConfig tailConfig, string configPath)
@@ -152,8 +149,16 @@ namespace ViewTailLogFile
                 Close();
                 return;
             }
-            alwaysOnTopToolStripMenuItem.Checked = true;
-            TopMost = true;
+            if (UserConfigSettings.isTailFormTop())
+            {
+                alwaysOnTopToolStripMenuItem.Checked = true;
+                TopMost = true;
+            }
+            else
+            {
+                alwaysOnTopToolStripMenuItem.Checked = false;
+                TopMost = false;
+            }
             if (tailConfig.FileCacheSize <= 0)
                 tailConfig.FileCacheSize = 1000;
 
@@ -172,8 +177,8 @@ namespace ViewTailLogFile
 
             if (tailConfig.FileChangeCheckInterval > 0)
                 _tailTimer.Interval = tailConfig.FileChangeCheckInterval;
-            
-            
+
+
 
             _loghitCounter = -1;
             _keywordHighlight = tailConfig.KeywordHighlight;
@@ -194,7 +199,7 @@ namespace ViewTailLogFile
                     if (keyword.LogHitCounter)
                         _loghitCounter = 0;
 
-                    
+
                 }
             }
 
@@ -342,7 +347,7 @@ namespace ViewTailLogFile
                 _loghitCounter = 0;
             }
 
-           
+
 
             _lastFormTitleUpdate = DateTime.Now;
 
@@ -377,7 +382,7 @@ namespace ViewTailLogFile
                 _statusStrip.Invalidate();
                 _statusStrip.Update();
             }
-           
+
         }
 
         void _logFileCache_LoadingFileEvent(object sender, EventArgs e)
@@ -979,7 +984,7 @@ namespace ViewTailLogFile
                 {
                     if (keywordMatch.LogHitCounter)
                         _loghitCounter++;
-                    
+
                     if (keywordMatch.AlertHighlight.Value)
                         warningIcon = true;
                 }
@@ -1098,7 +1103,7 @@ namespace ViewTailLogFile
             _tailListView.Update();
         }
 
-          
+
 
         private void _contextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
@@ -1124,13 +1129,13 @@ namespace ViewTailLogFile
         private void _contextMenuStrip_Opening(object sender, EventArgs e)
         {
 
-           //TODO code opening
+            //TODO code opening
         }
 
         private void TailForm_Activated(object sender, EventArgs e)
         {
             SetStatusBar(null);
-         
+
             TabPage parentTab = this.Tag as TabPage;
             if (parentTab != null)
                 parentTab.ImageIndex = -1;
@@ -1171,8 +1176,10 @@ namespace ViewTailLogFile
         }
         private void alwaysOnTopToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TopMost = !TopMost;
+            
+            TopMost = UserConfigSettings.ToggleTailFormTop(); ;
             alwaysOnTopToolStripMenuItem.Checked = TopMost;
+
         }
         private void configureViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1232,7 +1239,7 @@ namespace ViewTailLogFile
 
         private void gotoNextHighlightToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           // SearchForm.Instance.SearchAgain(this, true, true);
+            // SearchForm.Instance.SearchAgain(this, true, true);
         }
 
         private void pauseWindowToolStripMenuItem_Click(object sender, EventArgs e)

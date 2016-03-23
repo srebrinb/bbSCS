@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Html5WebSCSTrayApp.Properties;
 using System.Drawing;
+using log4net;
+using log4net.Core;
 
 namespace Html5WebSCSTrayApp
 {
@@ -64,8 +66,20 @@ namespace Html5WebSCSTrayApp
             //      itemComboBox.Click += new System.EventHandler(Startup_Click);
             itemComboBox.CheckedChanged += new System.EventHandler(Startup_Click);
             menu.Items.Add(itemComboBox);
+            itemComboBox = new ToolStripMenuItem();
+            itemComboBox.Text = "Debug";
+            itemComboBox.CheckOnClick = true;
+            itemComboBox.Checked = isDebug();
+            itemComboBox.CheckedChanged += new System.EventHandler(Debug_Click);
+            menu.Items.Add(itemComboBox);
             menu.Items.Add(new ToolStripSeparator());
-
+            itemComboBox = new ToolStripMenuItem();
+            itemComboBox.Text = "PINCache";
+            itemComboBox.CheckOnClick = true;
+            itemComboBox.Checked = isPINCache();
+            itemComboBox.CheckedChanged += new System.EventHandler(PINCache_Click);
+            menu.Items.Add(itemComboBox);
+            menu.Items.Add(new ToolStripSeparator());
             // Exit.
             item = new ToolStripMenuItem();
             item.Text = "Exit";
@@ -103,7 +117,7 @@ namespace Html5WebSCSTrayApp
                 viewLog = new ViewTailLogFile.ViewLog("log4net.log");
             }
 
-            
+
             viewLog.Show();
             Application.DoEvents();
         }
@@ -140,6 +154,35 @@ namespace Html5WebSCSTrayApp
         void Startup_Click(object sender, EventArgs e)
         {
             InstallSetup.SetStartup(!InstallSetup.GetStartup());
+        }
+        bool isDebug()
+        {
+            var repo = ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository());
+            Console.WriteLine("Log Level is" + repo.Root.Level.Name);
+            return repo.Root.Level <= Level.Debug;
+        }
+        void Debug_Click(object sender, EventArgs e)
+        {
+            var repo = ((log4net.Repository.Hierarchy.Hierarchy)LogManager.GetRepository());
+            if (isDebug())
+            {
+                repo.Root.Level = Level.Info;
+            }
+            else
+            {
+                repo.Root.Level = Level.Debug;
+            }
+            repo.RaiseConfigurationChanged(EventArgs.Empty);
+        }
+        bool isPINCache()
+        {
+            Properties.Settings setting = new Properties.Settings();
+            return setting.PINCache;
+        }
+        void PINCache_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.PINCache = !Properties.Settings.Default.PINCache ;
+            Properties.Settings.Default.Save();
         }
     }
 }

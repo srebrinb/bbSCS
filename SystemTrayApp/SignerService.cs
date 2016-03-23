@@ -380,7 +380,7 @@ namespace Html5WebSCSTrayApp
         {
             return "{res:true}";
         }
-        [RestAction("ProtectPin", Protect = true)]
+        [RestAction("protect", Protect = true)]
         public string ProtectPin(dynamic payload)
         {
             var objResp = new JObject();
@@ -404,6 +404,33 @@ namespace Html5WebSCSTrayApp
         {
             string resp = "{\"version\": \"1.0\",\"httpMethods\": \"GET, POST\",\"contentTypes\": \"data, digest\",\"signatureTypes\": \"signature\",\"selectorAvailable\": true,\"hashAlgorithms\": \"SHA1, SHA256, SHA384, SHA512\"}";
             return resp;
+        }
+        public bool checkAcrionExits(string action)
+        {
+
+            foreach (MethodInfo method in (typeof(SignerService)).GetMethods())
+            {
+                if (RestActionAttribute.IsRestActionAttribute(method))
+                {
+                    RestActionAttribute restAction = RestActionAttribute.getRestActionAttribute(method);
+                    if (action.ToLower().Equals(restAction.Name.ToLower()))
+                        return true ;
+                }
+            }
+            return false;
+        }
+        public bool checkAcrionProtect(string action)
+        {
+            foreach (MethodInfo method in (typeof(SignerService)).GetMethods())
+            {
+                if (RestActionAttribute.IsRestActionAttribute(method))
+                {
+                    RestActionAttribute restAction = RestActionAttribute.getRestActionAttribute(method);
+                    if (action.ToLower().Equals(restAction.Name.ToLower()))
+                        return restAction.Protect;
+                }
+            }
+            return false;
         }
         public string unkonwAction(string action)
         {

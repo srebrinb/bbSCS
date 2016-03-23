@@ -25,7 +25,6 @@ namespace Html5WebSCSTrayApp
         /// </summary>
         public ProcessIcon()
         {
-            
             // Instantiate the NotifyIcon object.
             ni = new NotifyIcon();
             wsHTTPRequestHandler = new WebService(ni);

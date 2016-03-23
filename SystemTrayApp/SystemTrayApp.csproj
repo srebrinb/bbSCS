@@ -163,6 +163,7 @@
     </Compile>
     <Compile Include="tailLite\TailForm.Designer.cs" />
     <Compile Include="tailLite\ThreadPoolQueue.cs" />
+    <Compile Include="tailLite\UserConfigSettings.cs" />
     <Compile Include="tailLite\ViewLog.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WebServer.cs" />

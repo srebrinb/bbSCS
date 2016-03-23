@@ -25,10 +25,10 @@ namespace Html5WebSCSTrayApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("true")]
-        public string PINCache {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool PINCache {
             get {
-                return ((string)(this["PINCache"]));
+                return ((bool)(this["PINCache"]));
             }
             set {
                 this["PINCache"] = value;
@@ -50,6 +50,18 @@ namespace Html5WebSCSTrayApp.Properties {
         public string httpsUri {
             get {
                 return ((string)(this["httpsUri"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TailFormTop {
+            get {
+                return ((bool)(this["TailFormTop"]));
+            }
+            set {
+                this["TailFormTop"] = value;
             }
         }
     }

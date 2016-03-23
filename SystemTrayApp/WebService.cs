@@ -16,7 +16,7 @@ using Html5WebSCSTrayApp.Properties;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-[assembly: log4net.Config.XmlConfigurator(Watch = true)]
+
 namespace Html5WebSCSTrayApp
 {
     class WebService
@@ -68,41 +68,46 @@ namespace Html5WebSCSTrayApp
             string UserAgent = request.UserAgent;
             string Machine = Program.executablePath;
             SHA1 sha1 = SHA1.Create();
-            byte[] id = sha1.ComputeHash(Encoding.UTF8.GetBytes(Origin+ UserAgent+ Machine));
+            byte[] id = sha1.ComputeHash(Encoding.UTF8.GetBytes(Origin + UserAgent + Machine));
             return System.Convert.ToBase64String(id);
         }
         private void TrayNotifyIconInfo(string Text)
         {
             if (TrayNotifyIcon != null) TrayNotifyIcon.ShowBalloonTip(2000, "", Text, ToolTipIcon.Info);
         }
-        private void TrayNotifyIconInfo(string Title,string Text)
+        private void TrayNotifyIconInfo(string Title, string Text)
         {
             if (TrayNotifyIcon != null) TrayNotifyIcon.ShowBalloonTip(2000, Title, Text, ToolTipIcon.Info);
         }
         public bool SendResponse(HttpListenerContext ctx)
         {
             HttpListenerRequest request = ctx.Request;
-            //  HttpListenerResponse response=ctx.Response;
-            log.InfoFormat("request ssl {2} {0} {1}", request.HttpMethod, request.RawUrl, ctx.Request.IsSecureConnection);
 
+            log.InfoFormat("Request {0} {2} {1}", request.HttpMethod, request.RawUrl, (ctx.Request.IsSecureConnection ? "https" : "http"));
+            if (log.IsDebugEnabled)
+            {
+                var headers = request.Headers;
+                foreach (var header in headers)
+                {
+                    log.Debug(header.ToString() + ": " + headers.Get(header.ToString()));
+                }
+
+            }
             bool newSession = true;
-
-
-            
             var cookies = request.Cookies;
             foreach (Cookie cookie in cookies)
             {
-                Console.WriteLine(cookie.Name + ":" + cookie.Value);
+                Console.WriteLine(cookie.Name + ": " + cookie.Value);
                 if (cookie.Name.Equals(sessionCookieName)) sessionid = cookie.Value;
             }
-            string originId=getOriginId(request);
+            string originId = getOriginId(request);
             string[] tm = sessionid.Split('-');
-            if (tm.Length == 2 && tm[1]== originId)
+            if (tm.Length == 2 && tm[1] == originId)
             {
                 newSession = false;
                 log.DebugFormat("old session {0}", sessionid);
             }
-            if (sessionid=="" || newSession)
+            if (sessionid == "" || newSession)
             {
                 sessionid = RandomString(32) + "-" + originId;
                 Cookie sessCookie = new Cookie(sessionCookieName, sessionid);
@@ -140,7 +145,7 @@ namespace Html5WebSCSTrayApp
                         {
                             buf = ReadFully(fsSource);
                         }
-                       
+
                         ctx.Response.ContentLength64 = buf.Length;
                         ctx.Response.OutputStream.Write(buf, 0, buf.Length);
                         // ctx.Response.Close();
@@ -149,8 +154,8 @@ namespace Html5WebSCSTrayApp
                         return false;
                     }
                 }
-                
-                if (segments[1].ToLower().StartsWith ("bytes"))
+
+                if (segments[1].ToLower().StartsWith("bytes"))
                 {
                     buf = Encoding.UTF8.GetBytes("test ok");
                     ctx.Response.ContentLength64 = buf.Length;
@@ -171,9 +176,11 @@ namespace Html5WebSCSTrayApp
                         }
 
                         log.Debug(documentContents);
-                        try { 
-                        payload = JsonConvert.DeserializeObject(documentContents);
-                        }catch(Exception e)
+                        try
+                        {
+                            payload = JsonConvert.DeserializeObject(documentContents);
+                        }
+                        catch (Exception e)
                         {
                             throw new Exception400("POST Contents wrong JSON.", e);
                         }
@@ -185,7 +192,7 @@ namespace Html5WebSCSTrayApp
                         payload.selector = new DynamicDictionary();
                         foreach (var param in request.QueryString)
                         {
-                            
+
                             Console.WriteLine(param.ToString().ToLower());
                             payload.dictionary[param.ToString().ToLower()] = request.QueryString.Get(param.ToString());
                             if (param.ToString().ToLower() == "thumbprint")
@@ -196,7 +203,7 @@ namespace Html5WebSCSTrayApp
                     }
                     ctx.Response.ContentType = "application/json";
                     string action = segments[1].ToLower().Replace("/", string.Empty);
-                    
+
                     switch (action)
                     {
                         case ("sign"):
@@ -210,7 +217,7 @@ namespace Html5WebSCSTrayApp
                             strOut = sSignerService.selectCert(payload);
                             break;
                         case ("validate"):
-                            strOut = sSignerService.Validate (payload);
+                            strOut = sSignerService.Validate(payload);
                             break;
                         case ("certinfo"):
                             strOut = sSignerService.certinfo(payload);
@@ -221,10 +228,10 @@ namespace Html5WebSCSTrayApp
                         case ("protect"):
                             strOut = sSignerService.ProtectPin(payload);
                             break;
-                        
+
                         case ("help"):
-                                strOut = sSignerService.unkonwAction(action);
-                                break;
+                            strOut = sSignerService.unkonwAction(action);
+                            break;
                     }
 
                 }
@@ -276,12 +283,18 @@ namespace Html5WebSCSTrayApp
         }
         public void Options(HttpListenerContext ctx)
         {
+
             ctx.Response.StatusCode = 200;
             ctx.Response.AppendHeader("Access-Control-Allow-Methods", "GET, POST");
             ctx.Response.AppendHeader("Access-Control-Allow-Headers", "Accept, Content-Type");
-            ctx.Response.AppendHeader("Access-Control-Allow-Origin", ctx.Request.Headers.Get("Origin"));
+            if (ctx.Request.Headers.Get("Origin") != "")
+            {
+                ctx.Response.AppendHeader("Access-Control-Allow-Origin", ctx.Request.Headers.Get("Origin"));
+                log.DebugFormat("Origin: ", ctx.Request.Headers.Get("Origin"));
+            }
             ctx.Response.AppendHeader("Accept", "application/json, */*");
-            log.InfoFormat("Origin {0}", ctx.Request.Headers.Get("Origin"));
+
+
         }
     }
 }
