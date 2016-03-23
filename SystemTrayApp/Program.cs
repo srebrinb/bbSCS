@@ -50,8 +50,7 @@ namespace Html5WebSCSTrayApp
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
-
-            if (Html5WebSCSTrayApp.InstallSetup.IsAdministrator())
+            if (Html5WebSCSTrayApp.InstallSetup.IsAdministrator() )
             {
                 string tump = Html5WebSCSTrayApp.InstallSetup.installCets();
                 Html5WebSCSTrayApp.InstallSetup.setACLs(prefix);
@@ -64,6 +63,7 @@ namespace Html5WebSCSTrayApp
                 catch (Exception e) {
                     MessageBox.Show(e.Message, "Start " + settings.httpsUri, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
+
             }
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())
