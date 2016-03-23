@@ -61,7 +61,6 @@ namespace Html5WebSCSTrayApp
                             var ctx = c as HttpListenerContext;
                             try
                             {
-
                                 _responderMethod(ctx);
 
                             }
@@ -93,6 +92,7 @@ namespace Html5WebSCSTrayApp
                             } // suppress any exceptions
                             finally
                             {
+
                                 // always close the stream
                                 ctx.Response.OutputStream.Close();
                             }

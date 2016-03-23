@@ -85,9 +85,10 @@ namespace Html5WebSCSTrayApp
         public bool SendResponse(HttpListenerContext ctx)
         {
             HttpListenerRequest request = ctx.Request;
-
-            log.InfoFormat("Request {0} {2} {1}", request.HttpMethod, request.RawUrl, (ctx.Request.IsSecureConnection ? "https" : "http"));
-            log.InfoFormat("Caller {0}",getCaller(request,"Active Windows {0} {1} {2}"));
+            log4net.NDC.Remove();
+            log4net.NDC.Push("Request");
+            log.InfoFormat("{0} {2} {1}", request.HttpMethod, request.RawUrl, (ctx.Request.IsSecureConnection ? "https" : "http"));
+            log.InfoFormat("Caller {0}",getCaller(request,"Active Windows '{0}' {1} {2}"));
             if (log.IsDebugEnabled)
             {
                 var headers = request.Headers;
@@ -170,6 +171,13 @@ namespace Html5WebSCSTrayApp
                 }
                 if ((request.HttpMethod.ToUpper().Equals("POST") || request.HttpMethod.ToUpper().Equals("GET")))
                 {
+                    log4net.NDC.Pop();
+                    string action = segments[1].ToLower().Replace("/", string.Empty);
+                    if (sSignerService.checkAcrionExits(action))
+                    {
+                        log4net.NDC.Push("API "+action);
+                    }
+                    
                     if (request.HttpMethod.ToUpper().Equals("POST"))
                     {
                         string documentContents;
@@ -208,7 +216,7 @@ namespace Html5WebSCSTrayApp
                         }
                     }
                     ctx.Response.ContentType = "application/json";
-                    string action = segments[1].ToLower().Replace("/", string.Empty);
+                    
 
                     switch (action)
                     {
@@ -245,12 +253,14 @@ namespace Html5WebSCSTrayApp
                 {
                     ctx.Response.Redirect("/");
                 }
-
+                
                 buf = Encoding.UTF8.GetBytes(strOut);
 
             }
             if (buf.Length == 0)
             {
+                log4net.NDC.Pop();
+                log4net.NDC.Push("Web UI");
                 try
                 {
                     string filename = "htmls";
@@ -283,6 +293,21 @@ namespace Html5WebSCSTrayApp
                     buf = Encoding.UTF8.GetBytes(e.Message);
                 }
             }
+            else
+            {
+                log4net.NDC.Push("Response");
+                if (log.IsDebugEnabled)
+                {
+                    log.Debug(strOut);
+                    var headers = ctx.Response.Headers;
+                    foreach (var header in headers)
+                    {
+                        log.Debug(header.ToString() + ": " + headers.Get(header.ToString()));
+                    }
+
+                }
+            }
+            
             ctx.Response.ContentLength64 = buf.Length;
             ctx.Response.OutputStream.Write(buf, 0, buf.Length);
             return true;

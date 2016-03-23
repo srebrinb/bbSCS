@@ -286,6 +286,7 @@ namespace Html5WebSCSTrayApp
                 //TODO get from si.signatureAlgorithm convert to JAVA name
                 objResp.Add("signatureAlgorithm", si.HashAlgorithm + "withRSA");
                 objResp.Add("chain", arrChain);
+                log4net.NDC.Pop();
             }
             catch (MyException me)
             {
@@ -296,6 +297,7 @@ namespace Html5WebSCSTrayApp
                 selectedCert = null;
                 throw new Exception500(e.Message, e);
             }
+            log4net.NDC.Pop();
             return objResp.ToString();
         }
         [RestAction("validate", "Validate signature", Methods = "POST")]
