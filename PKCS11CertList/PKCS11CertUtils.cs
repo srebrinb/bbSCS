@@ -11,6 +11,15 @@ namespace SmartCardSign
 {
     class PKCS11CertUtils
     {
+#if PLATFORM_X86
+        private const string Platform = "X86";
+#elif PLATFORM_X64
+        private const string Platform = "X64";
+#elif PLATFORM_ANYCPU
+        private const string Platform = "AnyCPU";
+#else
+        private const string Platform = "Unkown";
+#endif
         JArray jsonArrayRes;
         JArray jsonArrayError;
         public PKCS11CertUtils()
@@ -54,7 +63,7 @@ namespace SmartCardSign
             int i = 0;
             foreach (string pkcs11DLL in pkcs11DLLs)
             {
-                i += getCerts(pkcs11DLL);
+                i += getCerts(pkcs11DLL.TrimEnd('\\'));
             }
             return i;
         }
@@ -90,7 +99,8 @@ namespace SmartCardSign
                 {
                     pkcs11 = null;
                     JObject jobj = new JObject();
-                    jobj.Add("PKCS11modulPath", pkcs11DLL);
+                    jobj.Add("PKCS11modulePath", pkcs11DLL);
+                    jobj.Add("Platform", Platform);
                     jobj.Add("Error", e.Message);
                     jsonArrayError.Add(jobj);
                     return returnedCerts;
@@ -106,7 +116,7 @@ namespace SmartCardSign
                     catch (Exception e)
                     {
                         JObject jobj = new JObject();
-                        jobj.Add("PKCS11modulPath", pkcs11DLL);
+                        jobj.Add("PKCS11modulePath", pkcs11DLL);
                         JObject jslot = JObject.FromObject(slot.GetSlotInfo());
                         jobj.Add("Slot", jslot);
                         jobj.Add("Error", e.Message);
@@ -139,7 +149,7 @@ namespace SmartCardSign
                             jTokenInfo.Add("ManufacturerId", tokenInfo.ManufacturerId);
                             jTokenInfo.Add("Model", tokenInfo.Model);
                             jTokenInfo.Add("SerialNumber", tokenInfo.SerialNumber);
-                            jobj.Add("PKCS11modulPath", pkcs11DLL);
+                            jobj.Add("PKCS11modulePath", pkcs11DLL);
                             jobj.Add("tokenInfo", jTokenInfo);
                             //Console.WriteLine(tokenInfo.SlotId + ":" + ckaLabel.GetValueAsString() + " - " + Certificates[oAttriKey.GetValueAsString()].Thumbprint);
                             jsonArrayRes.Add(jobj);
@@ -149,7 +159,7 @@ namespace SmartCardSign
                     catch (Exception e)
                     {
                         JObject jobj = new JObject();
-                        jobj.Add("PKCS11modulPath", pkcs11DLL);
+                        jobj.Add("PKCS11modulePath", pkcs11DLL);
                         JObject jslot = JObject.FromObject(slot.GetSlotInfo());
                         jobj.Add("Slot", jslot);
                         jobj.Add("Error", e.Message);
@@ -162,7 +172,7 @@ namespace SmartCardSign
             catch (Exception e)
             {
                 JObject jobj = new JObject();
-                jobj.Add("PKCS11modulPath", pkcs11DLL);
+                jobj.Add("PKCS11modulePath", pkcs11DLL);
                 jobj.Add("Error", e.Message);
                 jsonArrayError.Add(jobj);
             }
