@@ -12,7 +12,7 @@ namespace PKCS11CertList
             if (args.Length ==0)
             {
                 Console.Error.WriteLine("PKCS11CertList.exe <PATH to PKCS11 module DLL> or <Directory PKCS11 modules DLLs>");
-                Console.Error.WriteLine("Result StdOut >out.json  Error SrdErr 2>");
+                Console.Error.WriteLine("Result StdOut >out.json  Error SrdErr 2>err.json");
                 return;
             }
             SmartCardSign.PKCS11CertUtils certUtils = new SmartCardSign.PKCS11CertUtils();
