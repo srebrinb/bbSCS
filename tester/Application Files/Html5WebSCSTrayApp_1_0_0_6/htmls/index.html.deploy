@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+
+    <title>HTML5 and Digital Signatures: Signature Creation Service</title>
+
+    <link rel="stylesheet" href="/lib/bootstrap.min.css">
+    <link href="/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <script src="/lib/jquery-1.11.0.min.js"></script>
+    <script src="/lib/jquery.xdomainrequest.min.js"></script>
+    <script src="/lib/bootstrap.min.js"></script>
+    <script src="scs.js"></script>
+    <style>
+        .margin-top {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="containter-fluid">
+        <div class="col-cs-12 col-sm-12 col-md-12">
+            <h2>HTML5 and Digital Signatures: Signature Creation Service</h2>
+            <p class="lead">
+                Generate digital signatures without browser extensions.
+            </p>
+            <p>
+                <a class="btn btn-default" href="https://eevertti.vrk.fi/Default.aspx?id=312">SCS SPEC</a>
+                <a class="btn btn-default" href="https://eevertti.vrk.fi/Default.aspx?id=247">SCS for Desktop</a>
+                <a class="btn btn-default" href="https://play.google.com/store/apps/details?id=fi.fineid.security.scs">SCS for Android</a>
+                <a class="btn btn-default" href="./tester/">SCS Tester</a>
+
+            </p>
+
+            <h3>Introduction</h3>
+            <p>
+                The Signature Creation Service (SCS) specifies a method to generate digital signatures in HTML5
+                applications <a href="http://www.w3.org/TR/html5/">[HTML5]</a> that are executed in User Agents, i.e., web browsers. The
+                specification utilizes the Cross-Origin Resource Sharing (CORS) specification <a href="http://www.w3.org/TR/cors/">[CORS]</a>
+                that enables an HTML5 application downloaded from Site A to communicate with a
+                service located in Site B using Javascript's XMLHttpRequest mechanisms <a href="http://www.w3.org/TR/XMLHttpRequest/">[XHR]</a>, for
+                instance. The communication protocol uses HTTP protocol and the information elements
+                are transferred using JSON format <a href="http://json.org/">[JSON]</a>.
+            </p>
+            <p>
+                The HTML5 application makes a signature request by sending the data that needs to be
+                signed to the SCS. Upon receiving the request, the SCS
+                displays a certificate selection dialog to the end user, who will select the certificate that
+                will be used to generate the digital signature. If required, the end user enters the PIN
+                code for accessing the private key to generate the signature. Once the signature is
+                created, the SCS sends the signature along with the certificate chain and other needed
+                information to the HTML5 application. Upon receiving the digital signature, the HTML5
+                application uses it according to its specifications.
+            </p>
+            <!--
+            <h3>Resources</h3>
+            <p>
+            Latest published SCS specification: <a href="https://eevertti.vrk.fi/Default.aspx?id=312">SCS 1.0.1</a>.
+            </p>
+            <p>
+            Fujitsu DigiSign 4.0 and later supports SCS 1.0.1 [<a href="https://eevertti.vrk.fi/Default.aspx?id=247">download page</a>]. DigiSign versions prior to 4.0 do not support SCS.
+            </p>
+            <p>
+            Android implementation of SCS 1.0.1 is available at Google Play:<br/>
+            <a href="https://play.google.com/store/apps/details?id=fi.fineid.security.scs&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" width="150px"/></a>
+            </p>
+            <!--
+            <p>
+              <a href="SCS-with-Samsung-Galaxy-S6.jpg"><img width="200px" src="SCS-with-Samsung-Galaxy-S6.jpg"/></a>
+            </p>
+            -->
+            <!--
+            <p>
+            <span class="label label-danger">BETA</span> There is an Android implementation for SCS 1.0.1: <a href="./android/">become beta tester</a>.
+            </p>
+            -->
+            <!--
+            <p>
+            <span class="label label-danger">DRAFT</span> Latest draft SCS specification: <a href="HTML5-and-Digital-Signatures-2015-06-30-DIFF.pdf">HTML5-and-Digital-Signatures-2015-06-30-DIFF.pdf</a>.
+            </p>
+            -->
+            <!--
+            <p>
+            If you have SCS implementation, you can test it here: <a href="./tester/">SCS Tester</a>.
+            -->
+            <h3>Development resources</h3>
+            <h4>SCS module for javascript</h4>
+            <p>SCS module encapsulates an automatic discovery to the SCS ports and offers an easy to use sign function that uses the SCS.</p>
+            <p>
+                Latest version of the SCS module: <a href="scs.js">scs.js</a>.
+            </p>
+            <p>
+                Example usage:
+<pre>function sign() {
+   // build the request object as specified, an example:
+   var request = {
+     version: "1.0",
+     selector: {
+       issuers: [
+         "&lt;issuer DN of an accepted CA&gt;",
+         "&lt;issuer DN of another accepted CA&gt;"
+       ],
+       keyusages: [
+         "digitalsignature",
+         "nonrepudiation"
+       ]
+     },
+     content: "&lt;to be signed data, base64 encoded&gt;",
+     contentType: "data",
+     hashAlgorithm: "SHA256",
+     signatureType: "signature"
+   }  
+   // and do the signing, call handleResponse function with the response
+   SCS.sign(handleResponse,request);
+}
+// callback function for SCS
+function handleRequest(response) {
+  // the response is the response returned from SCS.
+  if (response.status=="ok") {
+    // signature was generated
+  } else {
+    // signature was not generated for some reason
+  }
+}
+</pre>
+            </p>
+
+        </div>
+    </div>
+    <div class="col-xs-1 col-sm-1 col-md-1"></div>
+    </div>
+    </div>
+</body>
+</html>

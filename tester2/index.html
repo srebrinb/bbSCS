@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+
+ <title class="pagetitle">SCS tester</title>
+
+ <link rel="stylesheet" href="lib/bootstrap.min.css">
+ <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+ <script src="lib/jquery-1.11.0.min.js"></script>
+ <script src="lib/jquery.xdomainrequest.min.js"></script>
+ <script src="lib/bootstrap.min.js"></script> 
+ <script src="lib/sha.js"></script> 
+ <script src="scs.js"></script>
+ <script src="app.js"></script>
+<style>
+.margin-top {
+   margin: 0 10px;
+}
+</style>
+</head>
+<body>
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-12">
+<p>
+<h3 class="pagetitle">SCS tester</h3>
+</p>
+<p>
+
+<textarea class="form-control" rows="3" id="data">This is the data that is going to be digitally signed by the Signature Creation Service (SCS). Make sure that you have the SCS service running (see bottom of this page). Timestamp: </textarea>
+
+<div>
+<b>Input data type:</b>
+<label class="radio-inline">
+  <input type="radio" name="type" id="inlineRadio1" value="option1" checked onclick="setType('data')" checked> Data
+</label>
+<label class="radio-inline">
+  <input type="radio" name="type" id="inlineRadio2" value="option1" onclick="setType('digest')"> Digest*
+</label>
+<br/>
+* Digest is calculated automatically from the data above.
+</div>
+<div>
+<b>Signature type:</b>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio1" value="option1" checked onclick="setSignatureType(null)" checked> Default (Raw signature)
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio2" value="option1" onclick="setSignatureType('signature')"> Raw signature
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio3" value="option2" onclick="setSignatureType('pkcs7')" > PKCS7**
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio3" value="option2" onclick="setSignatureType('xml')" > XML
+</label>
+<br/>
+** Attached signature when input type is Data, detached when Digest.
+</div>
+<div>
+<b>Signature algorithm:</b>
+<label class="radio-inline">
+  <input type="radio" name="signaturealgorithm" id="inlineRadio1" value="option1" checked onclick="setSignatureAlgorithmType(null)" checked> Default (SHA256)
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturealgorithm" id="inlineRadio2" value="option1" onclick="setSignatureAlgorithmType('SHA1')"> SHA1
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturealgorithm" id="inlineRadio3" value="option2" onclick="setSignatureAlgorithmType('SHA256')" > SHA256
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturealgorithm" id="inlineRadio4" value="option2" onclick="setSignatureAlgorithmType('SHA384')" > SHA384
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturealgorithm" id="inlineRadio5" value="option2" onclick="setSignatureAlgorithmType('SHA512')" > SHA512
+</label>
+</div>
+<div>
+<b>Required key usages:</b>
+<label class="radio-inline">
+  <input type="radio" name="keyusage" id="inlineRadio1" value="option1" checked onclick="setKeyUsage(null)"> Any
+</label>
+<label class="radio-inline">
+  <input type="radio" name="keyusage" id="inlineRadio2" value="option2" onclick="setKeyUsage('digitalsignature')" > DigitalSignature
+<label class="radio-inline">
+  <input type="radio" name="keyusage" id="inlineRadio2" value="option2" onclick="setKeyUsage('nonrepudiation')" > NonRepudiation
+</label>
+</label>
+</div>
+<div>
+<b>Issuer name (only CN part shown):</b><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio1" value="option1" checked onclick="setIssuer(null)"> Any
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK CA for Test Purposes, OU=Testivarmenteet, O=Vaestorekisterikeskus TEST, S=Finland, C=FI')" > CN=VRK CA for Test Purposes <!--, OU=Testivarmenteet, O=Vaestorekisterikeskus TEST, S=Finland, C=FI-->
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK TEST CA for Healthcare Professionals, OU=Terveydenhuollon testiammattivarmenteet, O=Vaestorekisterikeskus TEST, S=Finland, C=FI')" > CN=VRK TEST CA for Healthcare Professionals<!--, OU=Terveydenhuollon testivarmenteet, O=Vaestorekisterikeskus TEST, S=Finland, C=FI-->
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK Gov. CA for Citizen Qualified Certificates - G2, OU=Valtion kansalaisvarmenteet, O=Vaestorekisterikeskus CA, C=FI')" > CN=VRK Gov. CA for Citizen Qualified Certificates - G2 <!--, OU=Valtion kansalaisvarmenteet, O=Vaestorekisterikeskus CA, C=FI-->
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK Gov. CA for Citizen Qualified Certificates, OU=Valtion kansalaisvarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI')" > CN=VRK Gov. CA for Citizen Qualified Certificates <!--, OU=Valtion kansalaisvarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI-->
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK CA for Qualified Certificates, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI')" > CN=VRK CA for Qualified Certificates<!--, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI-->
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK CA for Qualified Certificates - G2, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, C=FI')" > CN=VRK CA for Qualified Certificates - G2<!--, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, C=FI-->
+</label><br/>
+</div>
+</p>
+<a href="alert://start">start SCS</a>
+<p>
+<button type="button" id="sign" class="btn btn-primary" onclick="test()">Test signing</button>
+<button type="button" id="switch" class="btn" onclick="change()"><div id="buttontitle">Try SCS over HTTP</div></button>
+</p>
+<div id="result">
+<!--
+<p>
+<span class="label label-success">SCS javascript module</span> This page uses SCS javascript module, click <a href="/scs/">here</a> for more information.
+</p>
+<p>
+<span class="label label-success">SPEC</span> Signature Creation Service 1.0 specification is available at www.fineid.fi <a href="https://eevertti.vrk.fi/Default.aspx?id=312">HTML5 and Digital Signatures</a>. Draft version 1.0.1 of the specification is available <a href="/scs/">here</a>.
+</p>
+-->
+<!--
+<p>
+<span class="label label-danger">Updated on Apr 23, 2015</span> <b>Windows Vista SP2, 7, and 8</b>: download <a href="SignatureCreationService-0.9.5.exe">SignatureCreationService-0.9.5.exe</a> and run it (ignore possible security warnings).  If it fails to startup, you can try to update the .NET Framework [<a href="http://msdn.microsoft.com/en-us/library/5a4x27ek(v=vs.110).aspx">.NET Framework 4.5.x]</a>.  Any end entity certificate that is present via Windows CryptoAPI can be used. Please note that this works only if the web page using SCS is loaded over <b>HTTP</b>. Web pages loaded over <b>HTTPS</b> will not work.
+</p>
+<p>
+<span class="label label-danger">Updated on May 26, 2015</span> <b>Android 3.1 and later</b>: You can test SCS on Android by joining beta testing group, see more information <a href="/scs/android/">here</a>.
+</p>
+-->
+</div>
+<div id="firefox">
+<p>
+<span class="label label-danger">Firefox users</span> 
+You are using Firefox.  If you have SCS working in other browsers, you need to import SCS service's server certificate to the Firefox certificate store. You can do it so that first click this <a target="_blank" href="https://127.0.0.1:53952/">link</a>. Then on the page that opens click <b>I Understand the Risks</b>, and click <b>Add Exception...</b> button. Finally, on the dialog that opens, click <b>Confirm Security Exception</b>.  And you are done, you may close the window, and retry SCS tester.
+</p>
+
+</div>
+</div>
+</div>
+</body>
+</html>

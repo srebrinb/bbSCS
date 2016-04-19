@@ -1,60 +1,45 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "/",
+  "id": "SelectCertResponse",
   "type": "object",
   "properties": {
     "Subject": {
       "id": "Subject",
       "type": "string",
-      "enum": [
-        null,
-        "E=test@test.bg, CN=Test Profesionalen, OU=BULSTAT:1111111111, OU=Professional Certificate - UES, O=TEST AD, S=EGN:1111111111, C=BG"
-      ]
+      "description":"E=test@test.bg, CN=Test Profesionalen, OU=BULSTAT:1111111111, OU=Professional Certificate - UES, O=TEST AD, S=EGN:1111111111, C=BG"
+      
     },
     "SerialNumber": {
       "id": "SerialNumber",
       "type": "string",
-      "enum": [
-        null,
-        "009BA6E2"
-      ]
+      "description":"009BA6E2"
+      
     },
     "Issuer": {
       "id": "Issuer",
       "type": "string",
-      "enum": [
-        null,
-        "....., C=BG"
-      ]
+      "description":"....., C=BG"
     },
     "Thumbprint": {
       "id": "Thumbprint",
       "type": "string",
-      "enum": [
-        null,
-        "3C0DB07FCEECCB9DD3D961D9EA3F560CA1EB2403"
-      ]
+      "description":"3C0DB07FCEECCB9DD3D961D9EA3F560CA1EB2403"
     },
     "DateTimeNotAfter": {
       "id": "DateTimeNotAfter",
       "type": "string",
-      "enum": [
-        null,
-        "2016-05-12T15:08:58"
-      ]
+      "description":"2016-05-12T15:08:58"
+      
     },
     "DateTimeNotBefore": {
       "id": "DateTimeNotBefore",
       "type": "string",
-      "enum": [
-        null,
-        "2015-05-13T15:08:58"
-      ]
+      "description":"2016-05-12T15:08:58"
     },
     "Extensions": {
       "id": "Extensions",
       "type": "array",
-      "items": [
+      "items": 
         {
           "id": "0",
           "type": "object",
@@ -62,146 +47,55 @@
             "Oid": {
               "id": "Oid",
               "type": "string",
-              "enum": [
-                null,
-                "2.5.29.14"
-              ]
+              "description":"2.5.29.14"
             },
             "Name": {
               "id": "Name",
               "type": "string",
-              "enum": [
-                null,
-                "Subject Key Identifier"
-              ]
+              "description":"Subject Key Identifier"
             },
             "Value": {
               "id": "Value",
               "type": "string",
-              "enum": [
-                null,
-                "5E59E373F8A09CA780FCAA1BCE98E28C0A544376"
-              ]
+              "description":"5E59E373F8A09CA780FCAA1BCE98E28C0A544376"
             },
             "RawValue": {
               "id": "RawValue",
               "type": "string",
-              "enum": [
-                null,
-                "BBReWeNz+KCcp4D8qhvOmOKMClRDdg=="
-              ]
-            }
-          }
-        },
-        {
-          "id": "1",
-          "type": "object",
-          "properties": {
-            "Oid": {
-              "id": "Oid",
-              "type": "string",
-              "enum": [
-                null,
-                "2.5.29.35"
-              ]
-            },
-            "Name": {
-              "id": "Name",
-              "type": "string",
-              "enum": [
-                null,
-                "Authority Key Identifier"
-              ]
-            },
-            "Value": {
-              "id": "Value",
-              "type": "string",
-              "enum": [
-                null,
-                "30E30A1F1C40D59A28A8D8902D1862806CE23907"
-              ]
-            },
-            "RawValue": {
-              "id": "RawValue",
-              "type": "string",
-              "enum": [
-                null,
-                "MIGPgBQw4wofHEDVm..."
-              ]
+              "description":"BBReWeNz+KCcp4D8qhvOmOKMClRDdg=="
             }
           }
         }
-      ]
+      
     },
     "chain": {
       "id": "chain",
       "type": "array",
-      "items": [
+      "items": 
         {
           "id": "0",
-          "type": "string",
-          "enum": [
-            null,
-            "MIIHoTCCBY..."
-          ]
-        },
-        {
-          "id": "1",
-          "type": "string",
-          "enum": [
-            null,
-            "MIIHoTCCBY..."
-          ]
-        },
-        {
-          "id": "2",
-          "type": "string",
-          "enum": [
-            null,
-            "MIIHoTCCBY..."
-          ]
+          "type": "string"
         }
-      ]
     },
     "CertX509": {
       "id": "CertX509",
-      "type": "string",
-      "enum": [
-        null,
-        "MIIHoTCCBYmgAw...."
-      ]
+      "type": "string"
     },
     "Valid": {
       "id": "Valid",
-      "type": "boolean",
-      "enum": [
-        null,
-        true
-      ]
+      "type": "boolean"
     },
     "version": {
       "id": "version",
-      "type": "string",
-      "enum": [
-        null,
-        "1.0"
-      ]
+      "type": "string"
     },
     "status": {
       "id": "status",
-      "type": "string",
-      "enum": [
-        null,
-        "ok"
-      ]
+      "type": "string"
     },
     "reasonCode": {
       "id": "reasonCode",
-      "type": "integer",
-      "enum": [
-        null,
-        200
-      ]
+      "type": "integer"
     }
   }
 }

@@ -128,7 +128,9 @@ namespace Html5WebSCSTrayApp
             byte[] hashContent = processContent(content);
 
             RSACryptoServiceProvider csp = (RSACryptoServiceProvider)cert.PrivateKey;
+            Console.WriteLine(csp.SignatureAlgorithm);
             CspKeyContainerInfo cspKeyContainerInfo = csp.CspKeyContainerInfo;
+            Console.WriteLine(cspKeyContainerInfo.Accessible);
             CspParameters cspParametersTmp = new CspParameters();
             cspParametersTmp.KeyContainerName = cspKeyContainerInfo.KeyContainerName;
             cspParametersTmp.ProviderType = cspKeyContainerInfo.ProviderType;
@@ -146,7 +148,6 @@ namespace Html5WebSCSTrayApp
             */
             csp.Clear();
             RSACryptoServiceProvider rsaSignProvider = new RSACryptoServiceProvider(cspParametersTmp);
-            //RSACryptoServiceProvider rsaSignProvider = (RSACryptoServiceProvider)cert.PrivateKey;
             if (forceClearPINCache && securePwd == null) ClearPINCache2(rsaSignProvider);
             byte[] sig = rsaSignProvider.SignHash(hashContent, CryptoConfig.MapNameToOID(HashAlgorithm));
             signatureAlgorithm = rsaSignProvider.SignatureAlgorithm;

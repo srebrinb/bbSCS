@@ -132,7 +132,7 @@ namespace SmartCardSign
                         template.Add(new ObjectAttribute(CKA.CKA_CLASS, CKO.CKO_CERTIFICATE));
                         template.Add(new ObjectAttribute(CKA.CKA_CERTIFICATE_TYPE, CKC.CKC_X_509));
                         List<ObjectHandle> oObjCollection = session.FindAllObjects(template);
-                        byte[] ckaId = null;
+
                         foreach (var item in oObjCollection)
                         {
                             var oAttriVal = session.GetAttributeValue(item, new List<CKA>() { CKA.CKA_VALUE }).FirstOrDefault();
@@ -143,12 +143,12 @@ namespace SmartCardSign
                             JObject jobj = JObject.FromObject(certInfo.getCertInfo(new X509Certificate2(oAttriVal.GetValueAsByteArray())));
 
                             JObject jTokenInfo = new JObject();
-                            jTokenInfo.Add("SlotID", tokenInfo.SlotId);
+                            jTokenInfo.Add("slotID", tokenInfo.SlotId);
                             jTokenInfo.Add("ckaLabel", ckaLabel.GetValueAsString());
-                            jTokenInfo.Add("Label", tokenInfo.Label);
-                            jTokenInfo.Add("ManufacturerId", tokenInfo.ManufacturerId);
-                            jTokenInfo.Add("Model", tokenInfo.Model);
-                            jTokenInfo.Add("SerialNumber", tokenInfo.SerialNumber);
+                            jTokenInfo.Add("label", tokenInfo.Label);
+                            jTokenInfo.Add("manufacturerId", tokenInfo.ManufacturerId);
+                            jTokenInfo.Add("model", tokenInfo.Model);
+                            jTokenInfo.Add("serialNumber", tokenInfo.SerialNumber);
                             jobj.Add("PKCS11modulePath", pkcs11DLL);
                             jobj.Add("tokenInfo", jTokenInfo);
                             //Console.WriteLine(tokenInfo.SlotId + ":" + ckaLabel.GetValueAsString() + " - " + Certificates[oAttriKey.GetValueAsString()].Thumbprint);
@@ -228,7 +228,6 @@ namespace SmartCardSign
                         template.Add(new ObjectAttribute(CKA.CKA_CLASS, CKO.CKO_CERTIFICATE));
                         template.Add(new ObjectAttribute(CKA.CKA_CERTIFICATE_TYPE, CKC.CKC_X_509));
                         List<ObjectHandle> oObjCollection = session.FindAllObjects(template);
-                        byte[] ckaId = null;
                         foreach (var item in oObjCollection)
                         {
                             var oAttriVal = session.GetAttributeValue(item, new List<CKA>() { CKA.CKA_VALUE }).FirstOrDefault();
@@ -239,12 +238,12 @@ namespace SmartCardSign
                             JObject jobj = JObject.FromObject(certInfo.getCertInfo(new X509Certificate2(oAttriVal.GetValueAsByteArray())));
                            
                             JObject jTokenInfo =new JObject();
-                            jTokenInfo.Add("SlotID", tokenInfo.SlotId);
+                            jTokenInfo.Add("slotID", tokenInfo.SlotId);
                             jTokenInfo.Add("ckaLabel", ckaLabel.GetValueAsString());
-                            jTokenInfo.Add("Label", tokenInfo.Label);
-                            jTokenInfo.Add("ManufacturerId", tokenInfo.ManufacturerId);
-                            jTokenInfo.Add("Model", tokenInfo.Model);
-                            jTokenInfo.Add("SerialNumber", tokenInfo.SerialNumber);
+                            jTokenInfo.Add("label", tokenInfo.Label);
+                            jTokenInfo.Add("manufacturerId", tokenInfo.ManufacturerId);
+                            jTokenInfo.Add("model", tokenInfo.Model);
+                            jTokenInfo.Add("serialNumber", tokenInfo.SerialNumber);
                             jobj.Add("tokenInfo", jTokenInfo);
                             //Console.WriteLine(tokenInfo.SlotId + ":" + ckaLabel.GetValueAsString() + " - " + Certificates[oAttriKey.GetValueAsString()].Thumbprint);
                             jsonArrayOut.Add(jobj);
@@ -287,7 +286,6 @@ namespace SmartCardSign
                         template.Add(new ObjectAttribute(CKA.CKA_CLASS, CKO.CKO_CERTIFICATE));
                         template.Add(new ObjectAttribute(CKA.CKA_CERTIFICATE_TYPE, CKC.CKC_X_509));
                         List<ObjectHandle> oObjCollection = session.FindAllObjects(template);
-                        byte[] ckaId = null;
                         foreach (var item in oObjCollection)
                         {
                             var oAttriVal = session.GetAttributeValue(item, new List<CKA>() { CKA.CKA_VALUE }).FirstOrDefault();

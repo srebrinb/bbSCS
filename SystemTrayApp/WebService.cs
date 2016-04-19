@@ -295,6 +295,7 @@ namespace Html5WebSCSTrayApp
             }
             else
             {
+              
                 log4net.NDC.Push("Response");
                 if (log.IsDebugEnabled)
                 {

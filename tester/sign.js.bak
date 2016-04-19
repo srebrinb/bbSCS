@@ -1,0 +1,35 @@
+function sign() {
+
+   // build the request object as specified, an example:
+   var request = {
+     version: "1.0",
+     selector: {
+       issuers: [
+         "<issuer DN of an accepted CA>",
+         "<issuer DN of another accepted CA>"
+       ],
+       keyusages: [
+         "digitalsignature",
+         "nonrepudiation"
+       ]
+     },
+     content: "<to be signed data, base64 encoded>",
+     contentType: "data",
+     hashAlgorithm: "SHA256",
+     signatureType: "signature"
+   }  
+
+   // and do the signing, call handleResponse function with the response
+   SCS.sign(handleResponse,request);
+
+}
+
+// callback function for SCS
+function handleRequest(response) {
+  // the response is the response returned from SCS.
+  if (response.status=="ok") {
+    // signature was generated
+  } else {
+    // signature was not generated for some reason
+  }
+}

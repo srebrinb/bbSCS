@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+<meta http-equiv="Refresh" content="0;URL=http://developer.fineid.fi/tester2/">
+-->
+ <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+
+ <title>SCS tester</title>
+
+ <link rel="stylesheet" href="lib/bootstrap.min.css">
+ <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+ <script src="lib/jquery-1.11.0.min.js"></script>
+ <script src="lib/jquery.xdomainrequest.min.js"></script>
+ <script src="lib/bootstrap.min.js"></script> 
+ <script src="lib/json2.js"></script>
+ <script src="app.js"></script>
+<style>
+.margin-top {
+   margin: 0 10px;
+}
+</style>
+</head>
+<body>
+<div class="containter-fluid margin-top">
+<div class="row">
+<div class="col-xs-1 col-sm-1 col-md-1"></div>
+<div class="col-cs-10 col-sm-10 col-md-10">
+<p>
+<h3>SCS tester</h3>
+</p>
+<p>
+
+<textarea class="form-control" rows="3" id="data">This is the data that is going to be digitally signed by the Signature Creation Service (SCS). Make sure that you have the SCS service running (see bottom of this page).  Current maximum size for the data is 2MB.  Timestamp: </textarea>
+
+<div>
+<b>HTTP method:</b>
+<label class="radio-inline">
+  <input type="radio" name="method" id="inlineRadio1" value="option1" checked onclick="setMethod('POST')" checked> POST
+</label>
+<label class="radio-inline">
+  <input type="radio" name="method" id="inlineRadio2" value="option1" onclick="setMethod('GET')"> GET
+</label>
+</div>
+<div>
+<b>Port number:</b>
+<label class="radio-inline">
+<input id="port" type="text" name="port" value="53951" size="6"> (Fujitsu DigiSign uses port 53951, proof-of-concept demos below use port 8088)
+</label>
+</div>
+<div>
+<b>Local certificate validation:</b>
+<label class="radio-inline">
+  <input type="radio" name="validate" id="inlineRadio1" value="option1" checked onclick="setValidation(true)" checked> On
+</label>
+<label class="radio-inline">
+  <input type="radio" name="validate" id="inlineRadio2" value="option1" onclick="setValidation(false)"> Off
+</label>
+</div>
+<div>
+<b>Input data type:</b>
+<label class="radio-inline">
+  <input type="radio" name="type" id="inlineRadio1" value="option1" checked onclick="setType('data')" checked> Data
+</label>
+<label class="radio-inline">
+  <input type="radio" name="type" id="inlineRadio2" value="option1" onclick="setType('digest')"> Digest
+</label>
+</div>
+<div>
+<b>Signature type:</b>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio1" value="option1" checked onclick="setSignatureType(null)" checked> Default
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio2" value="option1" onclick="setSignatureType('SHA1')"> SHA1
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio3" value="option2" onclick="setSignatureType('SHA256')" > SHA256
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio4" value="option2" onclick="setSignatureType('SHA384')" > SHA384
+</label>
+<label class="radio-inline">
+  <input type="radio" name="signaturetype" id="inlineRadio5" value="option2" onclick="setSignatureType('SHA512')" > SHA512
+</label>
+</div>
+<div>
+<b>Required key usages:</b>
+<label class="radio-inline">
+  <input type="radio" name="keyusage" id="inlineRadio1" value="option1" checked onclick="setKeyUsage(null)"> Any
+</label>
+<label class="radio-inline">
+  <input type="radio" name="keyusage" id="inlineRadio2" value="option2" onclick="setKeyUsage('digitalsignature')" > DigitalSignature
+<label class="radio-inline">
+  <input type="radio" name="keyusage" id="inlineRadio2" value="option2" onclick="setKeyUsage('nonrepudiation')" > NonRepudiation
+</label>
+</label>
+</div>
+<div>
+<b>Issuer name:</b><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio1" value="option1" checked onclick="setIssuer(null)"> Any
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('B-Trust TEST Operational CA QES')" > CN=B-Trust TEST Operational CA QES
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=B-Trust Operational CA QES)" > CN=B-Trust Operational CA QES
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK Gov. CA for Citizen Qualified Certificates, OU=Valtion kansalaisvarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI')" > CN=VRK Gov. CA for Citizen Qualified Certificates, OU=Valtion kansalaisvarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK CA for Qualified Certificates, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI')" > CN=VRK CA for Qualified Certificates, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, S=Finland, C=FI
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="issuername" id="inlineRadio2" value="option2" onclick="setIssuer('CN=VRK CA for Qualified Certificates - G2, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, C=FI')" > CN=VRK CA for Qualified Certificates - G2, OU=Organisaatiovarmenteet, O=Vaestorekisterikeskus CA, C=FI
+</label><br/>
+<label class="radio-inline">
+  <input type="radio" name="thumbprint" id="inlinethumbprintRadio2" value="option2" onclick="setThumbprint('3C0DB07FCEECCB9DD3D961D9EA3F560CA1EB2403')" > 3C0DB07FCEECCB9DD3D961D9EA3F560CA1EB2403
+</label><br/>
+</div>
+</p>
+<p>
+<button type="button" id="sign" class="btn btn-primary" onclick="test()">Test signing</button>
+</p>
+<div id="result">
+<p>
+<span class="label label-success">SPEC</span> Signature Creation Service specification is available at www.fineid.fi: <a href="https://eevertti.vrk.fi/Default.aspx?id=312">Digital signatures in HTML5 applications</a>.
+</p>
+<p>
+<span class="label label-success">DEMO</span> SCS proof-of-concept demo is available on following platforms:
+<li><span class="label label-danger">Updated on Apr 23, 2015</span> <b>Windows Vista SP2, 7, and 8</b>: download <a href="SignatureCreationService-0.9.5.exe">SignatureCreationService-0.9.5.exe</a> and run it (ignore possible security warnings).  If it fails to startup, you can try to update the .NET Framework [<a href="http://msdn.microsoft.com/en-us/library/5a4x27ek(v=vs.110).aspx">.NET Framework 4.5.x]</a>.  Any end entity certificate that is present via Windows CryptoAPI can be used.</li>
+<li><span class="label label-danger">Updated on Oct 24, 2014</span> <b>Android 4.2.x and later</b>: download <a href="SignatureCreationService-0.3.1.apk">SignatureCreationService-0.3.1.apk</a>, install it, and start it once if it did start automatically after installation (you should get message "Signature Creation Service is started").  The service creates four self-signed certificates that can be used for demonstration purposes.</li>
+</p>
+
+</div>
+</div>
+<div class="col-xs-1 col-sm-1 col-md-1"></div>
+</div>
+</div>
+</body>
+</html>

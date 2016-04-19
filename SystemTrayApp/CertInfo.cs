@@ -23,26 +23,26 @@ namespace Html5WebSCSTrayApp
     class CertInfo
     {
         [DataMember]
-        public string Subject;
+        public string subject;
         [DataMember]
-        public string SerialNumber;
+        public string serialNumber;
         [DataMember]
-        public string Issuer;
+        public string issuer;
         [DataMember]
-        public string Thumbprint;
+        public string thumbprint;
         [DataMember]
-        public string DateTimeNotAfter;
+        public string dateTimeNotAfter;
         [DataMember]
-        public string DateTimeNotBefore;
+        public string dateTimeNotBefore;
         [DataMember(EmitDefaultValue = false)]
-        IList<Extension> Extensions = new List<Extension>();
+        IList<Extension> extensions = new List<Extension>();
         public X509Certificate2 certificate;
         [DataMember(EmitDefaultValue = false)]
         public IList<string> chain = new List<string>();
         [DataMember(EmitDefaultValue = false)]
-        public string CertX509 = "";
+        public string certX509 = "";
         [DataMember]
-        public bool Valid;
+        public bool valid;
 
         /*profiles:
         1) Base
@@ -114,17 +114,17 @@ namespace Html5WebSCSTrayApp
                 var x509 = x509ChainElement.Certificate;
                 if (i == 1)
                 {
-                    resCert.Subject = x509.Subject;
-                    resCert.Issuer = x509.Issuer;
-                    resCert.Thumbprint = x509.Thumbprint;
-                    resCert.SerialNumber = x509.GetSerialNumberString();
+                    resCert.subject = x509.Subject;
+                    resCert.issuer = x509.Issuer;
+                    resCert.thumbprint = x509.Thumbprint;
+                    resCert.serialNumber = x509.GetSerialNumberString();
 
-                    resCert.DateTimeNotBefore = x509.NotBefore.ToString("s");
-                    resCert.DateTimeNotAfter = x509.NotAfter.ToString("s"); ;
-                    resCert.Valid = x509.Verify();
+                    resCert.dateTimeNotBefore = x509.NotBefore.ToString("s");
+                    resCert.dateTimeNotAfter = x509.NotAfter.ToString("s"); ;
+                    resCert.valid = x509.Verify();
                     if (profile.HasFlag(Profiles.certx509))
                     {
-                        resCert.CertX509 = System.Convert.ToBase64String(x509.GetRawCertData());
+                        resCert.certX509 = System.Convert.ToBase64String(x509.GetRawCertData());
                     }
                     if (profile.HasFlag(Profiles.extensions))
                     {
@@ -132,7 +132,7 @@ namespace Html5WebSCSTrayApp
                         foreach (var extension in extensions)
                         {
 
-                            resCert.Extensions.Add(new Extension(extension));
+                            resCert.extensions.Add(new Extension(extension));
                         }
                     }
                 }

@@ -23,19 +23,16 @@
     "signatures": {
       "id": "signatures",
       "type": "array",
-      "items": [
-        null,
-        null
-      ]
+      "items": {
+		"type": "string"
+	  }
     },
     "chain": {
       "id": "chain",
       "type": "array",
-      "items": [
-        null,
-        null,
-        null
-      ]
+      "items": {
+		"type": "string"
+	  }
     },
     "status": {
       "id": "status",

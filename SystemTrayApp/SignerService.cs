@@ -22,7 +22,7 @@ namespace Html5WebSCSTrayApp
         }
         CertInfo selectedCert = null;
 
-        public dynamic profiles = "base";
+        public dynamic profiles = "base,chain";
         internal IntPtr hWndCaller=IntPtr.Zero;
 
         private X509Certificate2Collection lisyMyCerts(dynamic payload)
@@ -32,6 +32,7 @@ namespace Html5WebSCSTrayApp
             X509Certificate2Collection collection = (X509Certificate2Collection)store.Certificates;
             X509Certificate2Collection fcollection = new X509Certificate2Collection(collection);
             dynamic selector = null;
+
             try
             {
                 selector = payload.selector;
