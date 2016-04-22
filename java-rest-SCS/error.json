@@ -1,0 +1,19 @@
+[
+  {
+    "PKCS11modulePath": "C:\\work\\PKCS11\\64\\cvP11.dll",
+    "Slot": {
+      "SlotId": 1,
+      "SlotDescription": "Generic EMV Smartcard Reader 0",
+      "ManufacturerId": "Generic EMV Smartcard Reader 0",
+      "SlotFlags": {
+        "Flags": 7,
+        "TokenPresent": true,
+        "RemovableDevice": true,
+        "HardwareSlot": true
+      },
+      "HardwareVersion": "0.1",
+      "FirmwareVersion": "0.1"
+    },
+    "Error": "Method C_OpenSession returned CKR_TOKEN_NOT_RECOGNIZED"
+  }
+]
