@@ -5,6 +5,7 @@
  */
 package hello;
 
+import bobs.dss.token.P11SignatureToken.CertInfo;
 import bobs.dss.token.P11SignatureToken.CertificatesListJson;
 import bobs.dss.token.P11SignatureToken.PKCS11PrivateKeyEntry;
 import bobs.dss.token.P11SignatureToken.SignatureToken;
@@ -20,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.btrust.swing.CertListDialog;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/sign")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class SignerController {
 
     @RequestMapping("/sign")
@@ -57,6 +61,16 @@ public class SignerController {
                 selCert = signToken.getKeyByThumbprint(thumbprint);
             } else if (input.getSelector().getSerialNumber() != null) {
                 selCert = signToken.getKeyBySerialIssuer(input.getSelector().getSerialNumber(), input.getSelector().getIssuers().get(0));
+            }
+            if (selCert == null) {
+
+                CertListDialog cld = new CertListDialog(signToken.getCertsInfos());
+                cld.setCertSelectedIndex(-1);
+                cld.setModal(true);
+                cld.setVisible(true);
+                CertInfo selCertInfo = cld.getSelectedCertInfo();
+                selCert = signToken.getKeyByThumbprint(selCertInfo.getThumbprint());
+
             }
             if (selCert == null) {
                 res.setReasonCode(404);

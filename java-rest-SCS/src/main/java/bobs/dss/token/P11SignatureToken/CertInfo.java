@@ -1,4 +1,3 @@
-
 package bobs.dss.token.P11SignatureToken;
 
 import java.util.ArrayList;
@@ -7,6 +6,11 @@ import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
@@ -45,9 +49,8 @@ public class CertInfo {
     private String PKCS11modulePath;
 
     /**
-     * 
-     * @return
-     *     The Subject
+     *
+     * @return The Subject
      */
     @JsonProperty("subject")
     public String getSubject() {
@@ -55,9 +58,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param Subject
-     *     The Subject
+     *
+     * @param Subject The Subject
      */
     @JsonProperty("subject")
     public void setSubject(String Subject) {
@@ -70,9 +72,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The SerialNumber
+     *
+     * @return The SerialNumber
      */
     @JsonProperty("serialNumber")
     public String getSerialNumber() {
@@ -80,9 +81,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param SerialNumber
-     *     The SerialNumber
+     *
+     * @param SerialNumber The SerialNumber
      */
     @JsonProperty("serialNumber")
     public void setSerialNumber(String SerialNumber) {
@@ -95,9 +95,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The Issuer
+     *
+     * @return The Issuer
      */
     @JsonProperty("issuer")
     public String getIssuer() {
@@ -105,9 +104,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param Issuer
-     *     The Issuer
+     *
+     * @param Issuer The Issuer
      */
     @JsonProperty("issuer")
     public void setIssuer(String Issuer) {
@@ -119,10 +117,10 @@ public class CertInfo {
         return this;
     }
 //PKCS11modulePath
+
     /**
-     * 
-     * @return
-     *     The Issuer
+     *
+     * @return The Issuer
      */
     @JsonProperty("PKCS11modulePath")
     public String getPKCS11modulePath() {
@@ -130,9 +128,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param Issuer
-     *     The Issuer
+     *
+     * @param Issuer The Issuer
      */
     @JsonProperty("PKCS11modulePath")
     public void setPKCS11modulePath(String PKCS11modulePath) {
@@ -143,10 +140,10 @@ public class CertInfo {
         this.Issuer = Issuer;
         return this;
     }
+
     /**
-     * 
-     * @return
-     *     The Thumbprint
+     *
+     * @return The Thumbprint
      */
     @JsonProperty("thumbprint")
     public String getThumbprint() {
@@ -154,9 +151,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param Thumbprint
-     *     The Thumbprint
+     *
+     * @param Thumbprint The Thumbprint
      */
     @JsonProperty("thumbprint")
     public void setThumbprint(String Thumbprint) {
@@ -169,9 +165,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The DateTimeNotAfter
+     *
+     * @return The DateTimeNotAfter
      */
     @JsonProperty("dateTimeNotAfter")
     public String getDateTimeNotAfter() {
@@ -179,9 +174,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param DateTimeNotAfter
-     *     The DateTimeNotAfter
+     *
+     * @param DateTimeNotAfter The DateTimeNotAfter
      */
     @JsonProperty("dateTimeNotAfter")
     public void setDateTimeNotAfter(String DateTimeNotAfter) {
@@ -194,9 +188,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The DateTimeNotBefore
+     *
+     * @return The DateTimeNotBefore
      */
     @JsonProperty("dateTimeNotBefore")
     public String getDateTimeNotBefore() {
@@ -204,9 +197,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param DateTimeNotBefore
-     *     The DateTimeNotBefore
+     *
+     * @param DateTimeNotBefore The DateTimeNotBefore
      */
     @JsonProperty("dateTimeNotBefore")
     public void setDateTimeNotBefore(String DateTimeNotBefore) {
@@ -219,9 +211,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The chain
+     *
+     * @return The chain
      */
     @JsonProperty("chain")
     public List<String> getChain() {
@@ -229,9 +220,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param chain
-     *     The chain
+     *
+     * @param chain The chain
      */
     @JsonProperty("chain")
     public void setChain(List<String> chain) {
@@ -244,9 +234,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The Valid
+     *
+     * @return The Valid
      */
     @JsonProperty("valid")
     public Boolean getValid() {
@@ -254,9 +243,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param Valid
-     *     The Valid
+     *
+     * @param Valid The Valid
      */
     @JsonProperty("valid")
     public void setValid(Boolean Valid) {
@@ -269,9 +257,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @return
-     *     The tokenInfo
+     *
+     * @return The tokenInfo
      */
     @JsonProperty("tokenInfo")
     public TokenInfo getTokenInfo() {
@@ -279,9 +266,8 @@ public class CertInfo {
     }
 
     /**
-     * 
-     * @param tokenInfo
-     *     The tokenInfo
+     *
+     * @param tokenInfo The tokenInfo
      */
     @JsonProperty("tokenInfo")
     public void setTokenInfo(TokenInfo tokenInfo) {
@@ -291,6 +277,35 @@ public class CertInfo {
     public CertInfo withTokenInfo(TokenInfo tokenInfo) {
         this.tokenInfo = tokenInfo;
         return this;
+    }
+    public static String getCnFromDN(String dn) throws InvalidNameException {
+        String res="";
+        
+        LdapName ln = new LdapName(dn);
+
+        for (Rdn rdn : ln.getRdns()) {
+            if (rdn.getType().equalsIgnoreCase("CN")) {
+                res= rdn.getValue().toString();
+                break;
+            }
+        }
+        return res;
+    }
+    public String getSubjectCn()  {
+        try {
+            return getCnFromDN(this.Subject);
+        } catch (InvalidNameException ex) {
+            Logger.getLogger(CertInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return this.Subject;
+        }
+    }
+    public String getIssuerCn() {
+        try {
+            return getCnFromDN(this.Issuer);
+        } catch (InvalidNameException ex) {
+            Logger.getLogger(CertInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return this.Issuer;
+        }
     }
 
 }

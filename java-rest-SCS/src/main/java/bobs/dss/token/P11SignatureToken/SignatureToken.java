@@ -22,7 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 public class SignatureToken extends AbstractSignatureTokenConnection {
 
     CertificatesListGetter certGetter;
-    public boolean getCache=true;
+    public boolean getCache = true;
+
     public SignatureToken(CertificatesListGetter certGetter) throws CertificateException {
         this.certGetter = certGetter;
 
@@ -34,49 +35,51 @@ public class SignatureToken extends AbstractSignatureTokenConnection {
 
     @Override
     public void close() {
-        
+
     }
-    
+
     /**
      *
-     * @param serialNumber  - HEX Certificate Serial Number 
+     * @param serialNumber - HEX Certificate Serial Number
      * @param issuer - Name Issuer CN=B-Trust TEST Operational || NULL
      * @return
      * @throws CertificateException
      */
-    public PKCS11PrivateKeyEntry getKeyBySerialIssuer(String serialNumber,String issuer) throws CertificateException,DSSException{
-        serialNumber=serialNumber.replaceAll("^[0]+","");
-        serialNumber=StringUtils.deleteWhitespace(serialNumber.toUpperCase());
-        
+    public PKCS11PrivateKeyEntry getKeyBySerialIssuer(String serialNumber, String issuer) throws CertificateException, DSSException {
+        serialNumber = serialNumber.replaceAll("^[0]+", "");
+        serialNumber = StringUtils.deleteWhitespace(serialNumber.toUpperCase());
+
         CertInfo[] certsInfo = certGetter.getCertsInfo();
-        PKCS11PrivateKeyEntry key=null;
+        PKCS11PrivateKeyEntry key = null;
         for (CertInfo certInfo : certsInfo) {
-            String certSerialNumber=certInfo.getSerialNumber().replaceAll("^[0]+","");
-           if (serialNumber.equals(certSerialNumber) && (issuer==null || certInfo.getIssuer().contains(issuer))){
-               key=new PKCS11PrivateKeyEntry(certInfo);
-               break;
-           }
+            String certSerialNumber = certInfo.getSerialNumber().replaceAll("^[0]+", "");
+            if (serialNumber.equals(certSerialNumber) && (issuer == null || certInfo.getIssuer().contains(issuer))) {
+                key = new PKCS11PrivateKeyEntry(certInfo);
+                break;
+            }
         }
-        if (key==null){
-            throw new DSSException("Not found key by SerialNumber:"+serialNumber+" & Issuer"+issuer);
+        if (key == null) {
+            throw new DSSException("Not found key by SerialNumber:" + serialNumber + " & Issuer" + issuer);
         }
         return key;
     }
-    public PKCS11PrivateKeyEntry getKeyByThumbprint(String thumbprint) throws CertificateException{
-        thumbprint=StringUtils.deleteWhitespace(thumbprint.toUpperCase());
+
+    public PKCS11PrivateKeyEntry getKeyByThumbprint(String thumbprint) throws CertificateException {
+        thumbprint = StringUtils.deleteWhitespace(thumbprint.toUpperCase());
         CertInfo[] certsInfo = certGetter.getCertsInfo();
-        PKCS11PrivateKeyEntry key=null;
+        PKCS11PrivateKeyEntry key = null;
         for (CertInfo certInfo : certsInfo) {
-           if (thumbprint.equals(certInfo.getThumbprint())){
-               key=new PKCS11PrivateKeyEntry(certInfo);
-               break;
-           }
+            if (thumbprint.equals(certInfo.getThumbprint())) {
+                key = new PKCS11PrivateKeyEntry(certInfo);
+                break;
+            }
         }
-        if (key==null){
-            throw new DSSException("Not found key by thumbprint:"+thumbprint);
+        if (key == null) {
+            throw new DSSException("Not found key by thumbprint:" + thumbprint);
         }
         return key;
     }
+
     @Override
     public List<DSSPrivateKeyEntry> getKeys() throws DSSException {
         final List<DSSPrivateKeyEntry> list = new ArrayList<>();
@@ -91,4 +94,12 @@ public class SignatureToken extends AbstractSignatureTokenConnection {
         return list;
     }
 
+    public List<CertInfo> getCertsInfos() throws DSSException {
+        final List<CertInfo> list = new ArrayList<>();
+        CertInfo[] certsInfo = certGetter.getCertsInfo();
+        for (CertInfo certInfo : certsInfo) {
+            list.add(certInfo);
+        }
+        return list;
+    }
 }
