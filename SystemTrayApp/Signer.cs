@@ -154,7 +154,7 @@ namespace Html5WebSCSTrayApp
             rsaSignProvider.Clear();
             rsaSignProvider.Dispose();
             Properties.Settings setting = new Properties.Settings();
-            if (setting.PINCache) ClearPINCache2(rsaSignProvider);
+            if (!setting.PINCache) ClearPINCache2(rsaSignProvider);
             return System.Convert.ToBase64String(sig);
         }
         public bool verify(string content, string signature)

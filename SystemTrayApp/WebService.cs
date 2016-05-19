@@ -310,7 +310,12 @@ namespace Html5WebSCSTrayApp
             }
             
             ctx.Response.ContentLength64 = buf.Length;
-            ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+            try
+            {
+                ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+            }
+            catch (Exception e) { }
+            log4net.NDC.Clear();
             return true;
         }
         public void Options(HttpListenerContext ctx)

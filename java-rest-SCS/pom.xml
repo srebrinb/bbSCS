@@ -78,6 +78,10 @@
 
     <repositories>
         <repository>
+            <id>joinup-nexus</id>
+            <url>https://joinup.ec.europa.eu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
             <id>spring-releases</id>
             <url>https://repo.spring.io/libs-release</url>
         </repository>

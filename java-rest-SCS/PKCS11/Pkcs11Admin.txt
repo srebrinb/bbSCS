@@ -1,0 +1,9 @@
+2016-03-26 13:37:36 : Pkcs11Admin 0.2.0 64-bit on MS Windows
+2016-03-26 13:37:36 : GUI tool for administration of PKCS#11 enabled devices
+2016-03-26 13:37:36 : Please visit www.pkcs11admin.net for more information
+2016-03-26 13:37:48 : Net.Pkcs11Interop.Common.Pkcs11Exception: Method C_GetAttributeValue returned CKR_FUNCTION_FAILED
+   at Net.Pkcs11Interop.HighLevelAPI4.Session.GetAttributeValue(ObjectHandle objectHandle, List`1 attributes)
+   at Net.Pkcs11Interop.HighLevelAPI.Session.GetAttributeValue(ObjectHandle objectHandle, List`1 attributes)
+   at Net.Pkcs11Admin.Pkcs11Slot.ReadKeys(CKO objectClass, ClassAttributesDefinition keyAttributes)
+   at Net.Pkcs11Admin.Pkcs11Slot.ReadKeys()
+   at Net.Pkcs11Admin.Pkcs11Slot.Reload(Boolean onlySlotInfo)

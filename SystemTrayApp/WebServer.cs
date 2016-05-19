@@ -95,6 +95,7 @@ namespace Html5WebSCSTrayApp
 
                                 // always close the stream
                                 ctx.Response.OutputStream.Close();
+                                log4net.NDC.Clear();
                                 log4net.NDC.Remove();
                             }
                         }, _listener.GetContext());
