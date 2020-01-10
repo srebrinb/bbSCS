@@ -54,9 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SystemTrayApp\SystemTrayApp.csproj">
+    <ProjectReference Include="..\SystemTrayApp\Html5WebSCSApp.csproj">
       <Project>{f317af2e-9704-4a2a-bdae-b4662ed9483b}</Project>
-      <Name>SystemTrayApp</Name>
+      <Name>Html5WebSCSApp</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

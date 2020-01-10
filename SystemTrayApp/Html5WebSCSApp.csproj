@@ -63,14 +63,13 @@
     <ApplicationIcon>Images\html5Paraf.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>codesign.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -187,6 +186,7 @@
     <EmbeddedResource Include="tailLite\TailConfigForm.resx" />
     <EmbeddedResource Include="tailLite\TailForm.resx" />
     <None Include="app.config" />
+    <None Include="codesign.snk" />
     <None Include="htmls\lib\font-awesome\fonts\fontawesome-webfont.eot%40">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

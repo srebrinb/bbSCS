@@ -124,10 +124,11 @@ namespace Html5WebSCSTrayApp
                 ctx.Response.Cookies.Add(sessCookie);
                 log.DebugFormat("start new session {0}", sessionid);
             }
-            if (newSession)
-            {
-                TrayNotifyIconInfo("New Session", getCaller(request) + "\r\n" + request.RawUrl);
-            }
+            //TODO 
+            //if (false && newSession)
+            //{
+            //    TrayNotifyIconInfo("New Session", getCaller(request) + "\r\n" + request.RawUrl);
+            //}
             sSignerService.newSession = newSession;
             sSignerService.hWndCaller =  Utils.GetForegroundWindow();
 

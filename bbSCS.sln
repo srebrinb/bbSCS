@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCS", "SCS\SCS.csproj", "{90EF2B4E-FEC5-4FFA-804D-641F0ED8319B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemTrayApp", "SystemTrayApp\SystemTrayApp.csproj", "{F317AF2E-9704-4A2A-BDAE-B4662ED9483B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Html5WebSCSApp", "SystemTrayApp\Html5WebSCSApp.csproj", "{F317AF2E-9704-4A2A-BDAE-B4662ED9483B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemTrayAppTests", "SystemTrayAppTests\SystemTrayAppTests.csproj", "{8C93B99B-ED93-49DC-8CE8-A79DF0D687BC}"
 EndProject
@@ -82,5 +82,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2846334C-99E8-4C68-A566-1D49D1F0E71D}
 	EndGlobalSection
 EndGlobal
