@@ -26,10 +26,10 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>web paraf</ProductName>
-    <PublisherName>Borica-Bankservice</PublisherName>
-    <SuiteName>InfoSys</SuiteName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <ApplicationRevision>38</ApplicationRevision>
+    <PublisherName>ComBalSat</PublisherName>
+    <SuiteName>SrebrinB</SuiteName>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>40</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
