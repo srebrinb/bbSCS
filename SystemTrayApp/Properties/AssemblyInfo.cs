@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("html5 Paraf - Html5 Signature Creation Service")]
 [assembly: AssemblyDescription("HTML5 and Digital Signatures: Web Signature Creation Service.\nGenerate digital signatures without browser extensions.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Borica-Bankcervice")]
+[assembly: AssemblyCompany("SrebrinB")]
 [assembly: AssemblyProduct("html5 Paraf")]
 [assembly: AssemblyCopyright("Copyright © 2016. All Rights reserved.")]
 [assembly: AssemblyTrademark("")]
